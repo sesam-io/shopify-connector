@@ -1,6 +1,6 @@
 {
     "additional_parameters": {
-        "account_id": {},
+	"account_id": {},
         "token_url": {}
     },
     "auth": "oauth2",
@@ -12,7 +12,7 @@
     },
     "oauth2": {
         "login_url": "https://quickstart-b1d48eeb.myshopify.com/admin/oauth/authorize",
-        "scopes": [],
+        "scopes": ["read_customers", "write_customers"],
         "token_url": "https://quickstart-b1d48eeb.myshopify.com/admin/oauth/access_token"
     },
     "system-template": "templates/system.json"
