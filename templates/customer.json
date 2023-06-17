@@ -1,13 +1,11 @@
-[
-    {
-        "_id": "{{@ system @}}-{{@ datatype @}}-collect",
-        "add_namespaces": false,
-        "metadata": {},
-        "source": {
-            "operation": "customer_list",
-            "system": "{{@ system @}}",
-            "type": "rest"
-        },
-        "type": "pipe"
-    }
-]
+{
+  "_id": "{{@ system @}}-{{@ datatype @}}-collect",
+  "add_namespaces": false,
+  "metadata": {},
+  "source": {
+    "operation": "{{@ datatype @}}-list",
+    "system": "{{@ system @}}",
+    "type": "rest"
+  },
+  "type": "pipe"
+}
