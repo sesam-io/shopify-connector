@@ -1,0 +1,21 @@
+{
+    "_id": "{{@ system @}}",
+    "oauth2": {
+        "access_token": "$SECRET(oauth_access_token)",
+        "client_id": "$SECRET(oauth_client_id)",
+        "client_secret": "$SECRET(oauth_client_secret)",
+        "refresh_token": "$SECRET(oauth_refresh_token)",
+        "token_url": "{{@ token_url @}}"
+    },
+    "operations": {
+        "customer-list": {
+            "id_expression": "{{ id }}",
+            "method": "GET",
+            "payload_property": "customers",
+            "url": "customers.json"
+        }
+    },
+    "type": "system:rest",
+    "url_pattern": "https://{{@ account_id @}}.myshopify.com/admin/api/2023-04/%s",
+    "verify_ssl": true
+}

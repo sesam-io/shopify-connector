@@ -1,0 +1,19 @@
+{
+    "additional_parameters": {
+        "account_id": {},
+        "token_url": {}
+    },
+    "auth": "oauth2",
+    "datatypes": {
+        "customer": {
+            "label": "Customer",
+            "template": "templates/customer.json"
+        }
+    },
+    "oauth2": {
+        "login_url": "https://quickstart-b1d48eeb.myshopify.com/admin/oauth/authorize",
+        "scopes": [],
+        "token_url": "https://quickstart-b1d48eeb.myshopify.com/admin/oauth/access_token"
+    },
+    "system-template": "templates/system.json"
+}
