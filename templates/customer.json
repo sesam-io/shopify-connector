@@ -1,7 +1,6 @@
 {
   "_id": "{{@ system @}}-{{@ datatype @}}-collect",
-  "add_namespaces": false,
-  "metadata": {},
+  "namespaced_identifiers": false,
   "source": {
     "operation": "{{@ datatype @}}-list",
     "system": "{{@ system @}}",
