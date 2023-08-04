@@ -2,13 +2,52 @@
   "_id": "{{@ system @}}",
   "operations": {
     "customer-list": {
+      "error_expression": "{{ body.errors | tojson if body is defined and body.errors is defined else '' }}",
       "headers": {
         "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
       },
-      "id_expression": "{{ id }}",
-      "method": "GET",
-      "payload_property": "customers",
-      "url": "customers.json"
+      "id_expression": "{{ node.id }}",
+      "method": "POST",
+      "payload": {
+        "query": "query ($pageSize: Int!, $cursor: String) { customers(first: $pageSize, after: $cursor) { pageInfo { hasPreviousPage hasNextPage hasNextPage endCursor } edges { node { id firstName lastName email phone } } } }",
+        "variables": {
+          "pageSize": 10
+        }
+      },
+      "payload_property": "data.customers.edges",
+      "url": "graphql.json"
+    },
+    "order-list": {
+      "error_expression": "{{ body.errors | tojson if body is defined and body.errors is defined else '' }}",
+      "headers": {
+        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+      },
+      "id_expression": "{{ node.id }}",
+      "method": "POST",
+      "payload": {
+        "query": "query ($pageSize: Int!, $cursor: String) { orders(first: $pageSize, after: $cursor) { pageInfo { hasPreviousPage hasNextPage hasNextPage endCursor } edges { node { id } } } }",
+        "variables": {
+          "pageSize": 10
+        }
+      },
+      "payload_property": "data.orders.edges",
+      "url": "graphql.json"
+    },
+    "product-list": {
+      "error_expression": "{{ body.errors | tojson if body is defined and body.errors is defined else '' }}",
+      "headers": {
+        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+      },
+      "id_expression": "{{ node.id }}",
+      "method": "POST",
+      "payload": {
+        "query": "query ($pageSize: Int!, $cursor: String) { products(first: $pageSize, after: $cursor) { pageInfo { hasPreviousPage hasNextPage hasNextPage endCursor } edges { node { id } } } }",
+        "variables": {
+          "pageSize": 10
+        }
+      },
+      "payload_property": "data.products.edges",
+      "url": "graphql.json"
     }
   },
   "type": "system:rest",
