@@ -51,6 +51,6 @@
     }
   },
   "type": "system:rest",
-  "url_pattern": "https://{{@ account_id @}}.myshopify.com/admin/api/2023-04/%s",
+  "url_pattern": "https://{{@ site_id @}}.myshopify.com/admin/api/2023-04/%s",
   "verify_ssl": true
 }
