@@ -2,6 +2,16 @@
   "additional_parameters": {},
   "auth": "oauth2",
   "datatypes": {
+    "country": {
+      "label": "Country",
+      "sync_frequency": "slow",
+      "template": "templates/country.json"
+    },
+    "currency": {
+      "label": "Currency",
+      "sync_frequency": "slow",
+      "template": "templates/country.json"
+    },
     "customer": {
       "label": "Customer",
       "template": "templates/customer.json"

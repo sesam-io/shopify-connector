@@ -1,0 +1,27 @@
+[
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-all",
+    "namespaced_identifiers": false,
+    "pump": {
+      "run_at_startup_if_not_populated": true
+    },
+    "source": {
+      "operation": "{{@ datatype @}}-list",
+      "system": "{{@ system @}}",
+      "type": "rest"
+    },
+    "type": "pipe"
+  },
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-collect",
+    "namespaced_identifiers": false,
+    "pump": {
+      "run_at_startup_if_not_populated": true
+    },
+    "source": {
+      "dataset": "{{@ system @}}-{{@ datatype @}}-all",
+      "type": "dataset"
+    },
+    "type": "pipe"
+  }
+]

@@ -71,289 +71,10 @@
       "dataset": "{{@ system @}}-{{@ datatype @}}-transform",
       "type": "dataset"
     },
-    "transform": {
-      "properties": {
-        "operation_delete": "{{@ datatype @}}-delete",
-        "operation_insert": "{{@ datatype @}}-insert",
-        "operation_lookup": "{{@ datatype @}}-lookup",
-        "operation_update": "{{@ datatype @}}-update",
-        "primary_key": "id",
-        "rest_system": "{{@ system @}}",
-        "rewrite_rules_payload": {
-          "is-match": [
-            [
-              "comment",
-              "workaround for shadowing the outer _. variable"
-            ],
-            [
-              "discard",
-              [
-                "is-not-empty",
-                [
-                  "filter",
-                  [
-                    "matches",
-                    "_S.pattern",
-                    "_."
-                  ],
-                  "_R._S.$source.$based_on_properties"
-                ]
-              ]
-            ]
-          ],
-          "remove-unmapped-properties": [
-            [
-              "comment",
-              "function that builds up the dotted key and checks if one of dotted notations in $based_on_properties starts with this dotted key, recurses if the value is a dict"
-            ],
-            [
-              "comment",
-              "the inner 'map' checks if key matches any of the paths in $based_on_properties and recurses dicts"
-            ],
-            [
-              "comment",
-              "the 'group' removes keys for values that are null, empty strings, empty lists or empty dicts (after recursively removing unmapped properties) and groups lists of dicts"
-            ],
-            [
-              "comment",
-              "the 'map-dict' checks if the values are single valued lists and unwraps them as the previous group collects all values in lists"
-            ],
-            [
-              "comment",
-              "possible optimizations: don't recurse deep or long lists of dicts if there is no prefix that matches"
-            ],
-            [
-              "comment",
-              "possible optimizations: drop outer map-dict that unwraps the single value lists as the values are normalized regardless"
-            ],
-            [
-              "merge",
-              [
-                "map-dict",
-                "_.",
-                [
-                  "if",
-                  [
-                    "eq",
-                    [
-                      "count",
-                      "_."
-                    ],
-                    1
-                  ],
-                  [
-                    "first",
-                    "_."
-                  ],
-                  "_."
-                ],
-                [
-                  "dict",
-                  [
-                    "group",
-                    [
-                      "if",
-                      [
-                        "or",
-                        [
-                          "and",
-                          [
-                            "is-dict",
-                            [
-                              "last",
-                              "_."
-                            ]
-                          ],
-                          [
-                            "gt",
-                            [
-                              "count",
-                              [
-                                "last",
-                                "_."
-                              ]
-                            ],
-                            0
-                          ]
-                        ],
-                        [
-                          "and",
-                          [
-                            "not",
-                            [
-                              "is-dict",
-                              [
-                                "last",
-                                "_."
-                              ]
-                            ]
-                          ],
-                          [
-                            "and",
-                            [
-                              "is-not-empty",
-                              [
-                                "last",
-                                "_."
-                              ]
-                            ],
-                            [
-                              "neq",
-                              [
-                                "last",
-                                "_."
-                              ],
-                              ""
-                            ]
-                          ]
-                        ]
-                      ],
-                      [
-                        "first",
-                        "_."
-                      ]
-                    ],
-                    [
-                      "last",
-                      "_."
-                    ],
-                    [
-                      "map",
-                      [
-                        "list",
-                        [
-                          "if",
-                          [
-                            "is-not-empty",
-                            [
-                              "apply",
-                              "is-match",
-                              [
-                                "dict",
-                                "pattern",
-                                [
-                                  "concat",
-                                  "_S.prefix",
-                                  [
-                                    "ni-id",
-                                    [
-                                      "ni",
-                                      [
-                                        "first",
-                                        "_."
-                                      ]
-                                    ]
-                                  ],
-                                  "*"
-                                ]
-                              ]
-                            ]
-                          ],
-                          [
-                            "ni-id",
-                            [
-                              "ni",
-                              [
-                                "first",
-                                "_."
-                              ]
-                            ]
-                          ]
-                        ],
-                        [
-                          "if",
-                          [
-                            "is-dict",
-                            [
-                              "last",
-                              "_."
-                            ]
-                          ],
-                          [
-                            "apply",
-                            "remove-unmapped-properties",
-                            [
-                              "dict",
-                              "data",
-                              [
-                                "last",
-                                "_."
-                              ],
-                              "prefix",
-                              [
-                                "concat",
-                                "_S.prefix",
-                                [
-                                  "ni-id",
-                                  [
-                                    "ni",
-                                    [
-                                      "first",
-                                      "_."
-                                    ]
-                                  ]
-                                ],
-                                "."
-                              ]
-                            ]
-                          ],
-                          [
-                            "last",
-                            "_."
-                          ]
-                        ]
-                      ],
-                      [
-                        "items",
-                        "_S.data"
-                      ]
-                    ]
-                  ]
-                ]
-              ]
-            ]
-          ],
-          "rewrite_insert_payload": [
-            [
-              "add",
-              "$payload",
-              [
-                "dict",
-                "{{@ datatype @}}",
-                [
-                  "apply",
-                  "strip-internal-properties",
-                  "_S."
-                ]
-              ]
-            ]
-          ],
-          "rewrite_update_payload": [
-            [
-              "add",
-              "$payload",
-              [
-                "dict",
-                "{{@ datatype @}}",
-                [
-                  "apply",
-                  "strip-sesam-properties",
-                  [
-                    "apply",
-                    "remove-unmapped-properties",
-                    [
-                      "dict",
-                      "prefix",
-                      "",
-                      "data",
-                      "_S.$source"
-                    ]
-                  ]
-                ]
-              ]
-            ]
-          ],
-          "strip-internal-properties": [
+    "transform": [
+      {
+        "rules": {
+          "default": [
             [
               "copy",
               "*",
@@ -362,57 +83,38 @@
                 "_*",
                 "$*"
               ]
-            ]
-          ],
-          "strip-sesam-properties": [
+            ],
             [
-              "copy",
-              "*",
-              "sesam_*"
-            ]
-          ],
-          "strip_internal_properties": [
-            [
-              "filter",
+              "add",
+              "$payload",
               [
-                "and",
-                [
-                  "neq",
-                  [
-                    "substring",
-                    0,
-                    1,
-                    "_S.key"
-                  ],
-                  "_"
-                ],
-                [
-                  "neq",
-                  [
-                    "substring",
-                    0,
-                    1,
-                    "_S.key"
-                  ],
-                  "$"
-                ]
+                "dict",
+                "{{@ datatype @}}",
+                "_T."
               ]
             ],
             [
-              "merge-union",
-              [
-                "dict",
-                "_S.key",
-                "_S.value"
-              ]
+              "copy",
+              "*"
             ]
           ]
         },
-        "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
+        "type": "dtl"
       },
-      "template": "transform-share-rest",
-      "type": "template"
-    },
+      {
+        "properties": {
+          "operation_delete": "{{@ datatype @}}-delete",
+          "operation_insert": "{{@ datatype @}}-insert",
+          "operation_lookup": "{{@ datatype @}}-lookup",
+          "operation_update": "{{@ datatype @}}-update",
+          "primary_key": "id",
+          "rest_system": "{{@ system @}}",
+          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
+        },
+        "template": "transform-share-rest",
+        "type": "template"
+      }
+    ],
     "type": "pipe"
   }
 ]
