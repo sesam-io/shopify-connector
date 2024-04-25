@@ -2,6 +2,10 @@
   {
     "_id": "{{@ system @}}-{{@ datatype @}}-all",
     "namespaced_identifiers": false,
+    "pump": {
+      "run_at_startup_if_not_populated": true,
+      "schedule_interval": 300
+    },
     "source": {
       "operation": "{{@ datatype @}}-list",
       "supports_since": true,
@@ -16,6 +20,9 @@
       "{{@ system @}}-{{@ datatype @}}-share"
     ],
     "namespaced_identifiers": false,
+    "pump": {
+      "run_at_startup_if_not_populated": true
+    },
     "source": {
       "dataset": "{{@ system @}}-{{@ datatype @}}-all",
       "type": "dataset"
@@ -313,7 +320,11 @@
               [
                 "dict",
                 "{{@ datatype @}}",
-                "_S."
+                [
+                  "apply",
+                  "strip-internal-properties",
+                  "_S."
+                ]
               ]
             ]
           ],
@@ -339,6 +350,17 @@
                     ]
                   ]
                 ]
+              ]
+            ]
+          ],
+          "strip-internal-properties": [
+            [
+              "copy",
+              "*",
+              [
+                "list",
+                "_*",
+                "$*"
               ]
             ]
           ],

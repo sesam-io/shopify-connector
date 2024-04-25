@@ -43,46 +43,89 @@
       "payload_property": "customer",
       "url": "customers/{{entity.id}}.json"
     },
-    "customeraddress-list": {
+    "order-insert": {
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+      },
+      "method": "POST",
+      "payload_property": "order",
+      "url": "orders.json"
+    },
+    "order-list": {
       "headers": {
         "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
       },
       "id_expression": "{{ id }}",
       "method": "GET",
-      "payload_property": "addresses",
-      "url": "customers/{{ entity._id }}/addresses.json"
+      "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
+      "next_page_termination_strategy": [
+        "next-page-link-empty"
+      ],
+      "page_size": 1,
+      "payload_property": "orders",
+      "updated_expression": "{{ updated_at }}",
+      "url": "orders.json?status=any&limit={{page_size}}&updated_at_min={{since}}"
     },
-    "order-list": {
-      "error_expression": "{{ body.errors | tojson if body is defined and body.errors is defined else '' }}",
+    "order-lookup": {
       "headers": {
+        "Content-Type": "application/json",
         "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
       },
-      "id_expression": "{{ node.id }}",
-      "method": "POST",
-      "payload": {
-        "query": "query ($pageSize: Int!, $cursor: String) { orders(first: $pageSize, after: $cursor) { pageInfo { hasPreviousPage hasNextPage hasNextPage endCursor } edges { node { id } } } }",
-        "variables": {
-          "pageSize": 10
-        }
+      "method": "GET",
+      "payload_property": "order",
+      "url": "orders/{{entity.id}}.json"
+    },
+    "order-update": {
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
       },
-      "payload_property": "data.orders.edges",
-      "url": "graphql.json"
+      "method": "PUT",
+      "payload_property": "order",
+      "url": "orders/{{entity.id}}.json"
+    },
+    "product-insert": {
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+      },
+      "method": "POST",
+      "payload_property": "product",
+      "url": "products.json"
     },
     "product-list": {
-      "error_expression": "{{ body.errors | tojson if body is defined and body.errors is defined else '' }}",
       "headers": {
         "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
       },
-      "id_expression": "{{ node.id }}",
-      "method": "POST",
-      "payload": {
-        "query": "query ($pageSize: Int!, $cursor: String) { products(first: $pageSize, after: $cursor) { pageInfo { hasPreviousPage hasNextPage hasNextPage endCursor } edges { node { id } } } }",
-        "variables": {
-          "pageSize": 10
-        }
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
+      "next_page_termination_strategy": [
+        "next-page-link-empty"
+      ],
+      "page_size": 1,
+      "payload_property": "products",
+      "updated_expression": "{{ updated_at }}",
+      "url": "products.json?limit={{page_size}}&updated_at_min={{since}}"
+    },
+    "product-lookup": {
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
       },
-      "payload_property": "data.products.edges",
-      "url": "graphql.json"
+      "method": "GET",
+      "payload_property": "product",
+      "url": "products/{{entity.id}}.json"
+    },
+    "product-update": {
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+      },
+      "method": "PUT",
+      "payload_property": "product",
+      "url": "products/{{entity.id}}.json"
     }
   },
   "type": "system:rest",
