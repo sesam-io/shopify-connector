@@ -1,7 +1,5 @@
 {
-  "additional_parameters": {
-    "account_id": {}
-  },
+  "additional_parameters": {},
   "auth": "oauth2",
   "datatypes": {
     "customer": {
@@ -18,7 +16,7 @@
     }
   },
   "oauth2": {
-    "login_url": "https://quickstart-b1d48eeb.myshopify.com/admin/oauth/authorize",
+    "login_url": "https://sesam-talk-dev.myshopify.com/admin/oauth/authorize",
     "scopes": [
       "read_customers",
       "write_customers",
@@ -27,7 +25,7 @@
       "read_orders",
       "write_orders"
     ],
-    "token_url": "https://quickstart-b1d48eeb.myshopify.com/admin/oauth/access_token"
+    "token_url": "https://sesam-talk-dev.myshopify.com/admin/oauth/access_token"
   },
   "system-template": "templates/system.json"
 }

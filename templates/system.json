@@ -1,21 +1,56 @@
 {
   "_id": "{{@ system @}}",
   "operations": {
+    "customer-insert": {
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+      },
+      "method": "POST",
+      "payload_property": "customer",
+      "url": "customers.json"
+    },
     "customer-list": {
-      "error_expression": "{{ body.errors | tojson if body is defined and body.errors is defined else '' }}",
       "headers": {
         "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
       },
-      "id_expression": "{{ node.id }}",
-      "method": "POST",
-      "payload": {
-        "query": "query ($pageSize: Int!, $cursor: String) { customers(first: $pageSize, after: $cursor) { pageInfo { hasPreviousPage hasNextPage hasNextPage endCursor } edges { node { id firstName lastName email phone } } } }",
-        "variables": {
-          "pageSize": 10
-        }
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
+      "next_page_termination_strategy": [
+        "next-page-link-empty"
+      ],
+      "page_size": 1,
+      "payload_property": "customers",
+      "updated_expression": "{{ updated_at }}",
+      "url": "customers.json?limit={{page_size}}&updated_at_min={{since}}"
+    },
+    "customer-lookup": {
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
       },
-      "payload_property": "data.customers.edges",
-      "url": "graphql.json"
+      "method": "GET",
+      "payload_property": "customer",
+      "url": "customers/{{entity.id}}.json"
+    },
+    "customer-update": {
+      "headers": {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+      },
+      "method": "PUT",
+      "payload_property": "customer",
+      "url": "customers/{{entity.id}}.json"
+    },
+    "customeraddress-list": {
+      "headers": {
+        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+      },
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "payload_property": "addresses",
+      "url": "customers/{{ entity._id }}/addresses.json"
     },
     "order-list": {
       "error_expression": "{{ body.errors | tojson if body is defined and body.errors is defined else '' }}",
@@ -51,6 +86,6 @@
     }
   },
   "type": "system:rest",
-  "url_pattern": "https://{{@ account_id @}}.myshopify.com/admin/api/2023-04/%s",
+  "url_pattern": "https://sesam-talk-dev.myshopify.com/admin/api/2024-04/%s",
   "verify_ssl": true
 }
