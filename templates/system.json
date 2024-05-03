@@ -1,10 +1,10 @@
 {
   "_id": "{{@ system @}}",
+  "headers": {
+    "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+  },
   "operations": {
     "country-list": {
-      "headers": {
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
-      },
       "id_expression": "{{ id }}",
       "method": "GET",
       "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
@@ -16,9 +16,6 @@
       "url": "countries.json?limit={{page_size}}&updated_at_min={{since}}"
     },
     "currency-list": {
-      "headers": {
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
-      },
       "id_expression": "{{ currency }}",
       "method": "GET",
       "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
@@ -31,17 +28,13 @@
     },
     "customer-insert": {
       "headers": {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+        "Content-Type": "application/json"
       },
       "method": "POST",
       "payload_property": "customer",
       "url": "customers.json"
     },
     "customer-list": {
-      "headers": {
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
-      },
       "id_expression": "{{ id }}",
       "method": "GET",
       "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
@@ -55,8 +48,7 @@
     },
     "customer-lookup": {
       "headers": {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+        "Content-Type": "application/json"
       },
       "method": "GET",
       "payload_property": "customer",
@@ -64,26 +56,40 @@
     },
     "customer-update": {
       "headers": {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+        "Content-Type": "application/json"
       },
       "method": "PUT",
       "payload_property": "customer",
       "url": "customers/{{entity.id}}.json"
     },
+    "inventoryitem-list": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "payload_property": "inventory_items",
+      "url": "inventory_items.json?ids={{ entity.inventory_ids }}"
+    },
+    "inventoryitem-lookup": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "payload_property": "inventory_item",
+      "url": "inventory_items/{{ id }}.json"
+    },
+    "inventoryitem-update": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "PUT",
+      "url": "inventory_items/{{ id }}.json"
+    },
     "order-insert": {
       "headers": {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+        "Content-Type": "application/json"
       },
       "method": "POST",
       "payload_property": "order",
       "url": "orders.json"
     },
     "order-list": {
-      "headers": {
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
-      },
       "id_expression": "{{ id }}",
       "method": "GET",
       "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
@@ -97,8 +103,7 @@
     },
     "order-lookup": {
       "headers": {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+        "Content-Type": "application/json"
       },
       "method": "GET",
       "payload_property": "order",
@@ -106,8 +111,7 @@
     },
     "order-update": {
       "headers": {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+        "Content-Type": "application/json"
       },
       "method": "PUT",
       "payload_property": "order",
@@ -115,17 +119,13 @@
     },
     "product-insert": {
       "headers": {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+        "Content-Type": "application/json"
       },
       "method": "POST",
       "payload_property": "product",
       "url": "products.json"
     },
     "product-list": {
-      "headers": {
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
-      },
       "id_expression": "{{ id }}",
       "method": "GET",
       "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
@@ -139,8 +139,7 @@
     },
     "product-lookup": {
       "headers": {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+        "Content-Type": "application/json"
       },
       "method": "GET",
       "payload_property": "product",
@@ -148,8 +147,7 @@
     },
     "product-update": {
       "headers": {
-        "Content-Type": "application/json",
-        "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+        "Content-Type": "application/json"
       },
       "method": "PUT",
       "payload_property": "product",
