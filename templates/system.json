@@ -188,8 +188,7 @@
       "method": "PUT",
       "payload_property": "variant",
       "url": "variants/{{entity.id}}.json"
-    },
-
+    }
   },
   "type": "system:rest",
   "url_pattern": "https://{{@ account_id @}}.myshopify.com/admin/api/2024-04/%s",
