@@ -152,9 +152,21 @@
       "method": "PUT",
       "payload_property": "product",
       "url": "products/{{entity.id}}.json"
+    },
+    "variant-list": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
+      "next_page_termination_strategy": [
+        "next-page-link-empty"
+      ],
+      "page_size": 100,
+      "payload_property": "variants",
+      "updated_expression": "{{ updated_at }}",
+      "url": "variants.json?limit={{page_size}}&updated_at_min={{since}}"
     }
   },
   "type": "system:rest",
-  "url_pattern": "https://{{@ account_id @}}.myshopify.com/admin/api/2024-04/%s",
+  "url_pattern": "https://.myshopify.com/admin/api/2024-04/%s",
   "verify_ssl": true
 }
