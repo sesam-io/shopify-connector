@@ -23,6 +23,10 @@
     "product": {
       "label": "Product",
       "template": "templates/customer.json"
+    },
+    "variant": {
+      "label": "Variant",
+      "template": "templates/customer.json"
     }
   },
   "oauth2": {

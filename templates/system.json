@@ -153,6 +153,14 @@
       "payload_property": "product",
       "url": "products/{{entity.id}}.json"
     },
+    "variant-insert": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "POST",
+      "payload_property": "variant",
+      "url": "variants.json"
+    },
     "variant-list": {
       "id_expression": "{{ id }}",
       "method": "GET",
@@ -164,6 +172,22 @@
       "payload_property": "variants",
       "updated_expression": "{{ updated_at }}",
       "url": "variants.json?limit={{page_size}}&updated_at_min={{since}}"
+    },
+    "variant-lookup": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "GET",
+      "payload_property": "variant",
+      "url": "variants/{{entity.id}}.json"
+    },
+    "variant-update": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "PUT",
+      "payload_property": "variant",
+      "url": "variants/{{entity.id}}.json"
     }
   },
   "type": "system:rest",
