@@ -27,6 +27,10 @@
     "variant": {
       "label": "Variant",
       "template": "templates/customer.json"
+    },
+    "webhook": {
+      "label": "Webhook",
+      "template": "templates/webhook.json"
     }
   },
   "oauth2": {
