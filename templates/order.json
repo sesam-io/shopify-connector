@@ -125,6 +125,7 @@
   },
   {
     "_id": "{{@ system @}}-{{@ datatype @}}-registerwebhook",
+    "comment": "WARNING! This pipe is generated from the template of the 'customer' datatype and changes will be silently ignored during collapse. For more information see the connectorpy README.",
     "namespaced_identifiers": false,
     "pump": {
       "run_at_startup_if_not_populated": true
@@ -146,22 +147,22 @@
           }
         },
         {
-          "_id": "{{@ datatype @}}-update",
+          "_id": "{{@ datatype @}}-updated",
           "_updated": 1,
           "properties": {
             "webhook": {
               "address": "https://datahub-3fc8150c.sesam.cloud/api/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
-              "topic": "{{@ datatype @}}s/update"
+              "topic": "{{@ datatype @}}s/updated"
             }
           }
         },
         {
-          "_id": "{{@ datatype @}}-delete",
+          "_id": "{{@ datatype @}}-canselled",
           "_updated": 2,
           "properties": {
             "webhook": {
               "address": "https://datahub-3fc8150c.sesam.cloud/api/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
-              "topic": "{{@ datatype @}}s/delete"
+              "topic": "{{@ datatype @}}s/cancelled"
             }
           }
         }

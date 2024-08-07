@@ -18,7 +18,7 @@
     },
     "order": {
       "label": "Order",
-      "template": "templates/customer.json"
+      "template": "templates/order.json"
     },
     "product": {
       "label": "Product",
@@ -26,7 +26,7 @@
     },
     "variant": {
       "label": "Variant",
-      "template": "templates/customer.json"
+      "template": "templates/variant.json"
     },
     "webhook": {
       "label": "Webhook",

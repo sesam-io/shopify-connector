@@ -2,14 +2,9 @@
   {
     "_id": "{{@ system @}}-{{@ datatype @}}-collect",
     "namespaced_identifiers": false,
-    "pump": {
-      "run_at_startup_if_not_populated": true,
-      "schedule_interval": 300
-    },
     "source": {
       "operation": "{{@ datatype @}}-list",
       "system": "{{@ system @}}",
-      "trace": true,
       "type": "rest"
     },
     "transform": {
@@ -18,20 +13,6 @@
           [
             "copy",
             "*"
-          ],
-          [
-            "add",
-            "$healthy",
-            [
-              "if",
-              [
-                "eq",
-                "_S.status",
-                "ACTIVE"
-              ],
-              true,
-              false
-            ]
           ]
         ]
       },
