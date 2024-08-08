@@ -3,16 +3,62 @@
     "_id": "{{@ system @}}-{{@ datatype @}}-all",
     "namespaced_identifiers": false,
     "pump": {
-      "run_at_startup_if_not_populated": true,
-      "schedule_interval": 300
+      "run_at_startup_if_not_populated": true
     },
     "source": {
-      "operation": "{{@ datatype @}}-list",
-      "supports_since": true,
-      "system": "{{@ system @}}",
-      "type": "rest"
+      "dataset": "{{@ system @}}-product-collect",
+      "type": "dataset"
     },
+    "transform": {
+      "rules": {
+        "default": [
+        [
+          "create-child",
+            [
+              "apply", 
+              "variants", 
+              "_S.variants"
+            ]
+        ]
+      ],
+      "variants": [
+        [
+          "add", 
+          "_id",
+            [
+              "string", 
+              "_S.id"
+            ]
+        ],
+        [
+          "add", 
+          "$original_id", 
+          "_R._S._id"
+        ],
+        [
+          "copy", 
+          "*"
+        ]
+      ]
+    },
+    "type": "dtl",
+  },
     "type": "pipe"
+  },
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-all2",
+    "namespaced_identifiers": false,
+    "pump": {
+      "run_at_startup_if_not_populated": true
+    },
+    "source": {
+      "type": "dataset",
+      "dataset": "{{@ system @}}-{{@ datatype @}}-all"
+    },
+    "transform": {
+      "type": "emit_children"
+    },
+   "type": "pipe"
   },
   {
     "_id": "{{@ system @}}-{{@ datatype @}}-collect",
@@ -24,7 +70,7 @@
       "run_at_startup_if_not_populated": true
     },
     "source": {
-      "dataset": "{{@ system @}}-{{@ datatype @}}-all",
+      "dataset": "{{@ system @}}-{{@ datatype @}}-all2",
       "type": "dataset"
     },
     "transform": [
