@@ -1,5 +1,7 @@
 {
-  "additional_parameters": {},
+  "additional_parameters": {
+    "service_url": {}
+  },
   "auth": "oauth2",
   "datatypes": {
     "country": {
