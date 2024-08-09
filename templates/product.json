@@ -174,7 +174,7 @@
           "_updated": 0,
           "properties": {
             "webhook": {
-              "address": "https://datahub-3fc8150c.sesam.cloud/api/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
+              "address": "{{@ service_url @}}/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
               "topic": "{{@ datatype @}}s/create"
             }
           }
@@ -184,7 +184,7 @@
           "_updated": 1,
           "properties": {
             "webhook": {
-              "address": "https://datahub-3fc8150c.sesam.cloud/api/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
+              "address": "{{@ service_url @}}/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
               "topic": "{{@ datatype @}}s/update"
             }
           }
@@ -194,7 +194,7 @@
           "_updated": 2,
           "properties": {
             "webhook": {
-              "address": "https://datahub-3fc8150c.sesam.cloud/api/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
+              "address": "{{@ service_url @}}/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
               "topic": "{{@ datatype @}}s/delete"
             }
           }
