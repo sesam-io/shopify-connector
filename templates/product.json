@@ -1,0 +1,594 @@
+[
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-all",
+    "namespaced_identifiers": false,
+    "pump": {
+      "run_at_startup_if_not_populated": true,
+      "schedule_interval": 300
+    },
+    "source": {
+      "operation": "{{@ datatype @}}-list",
+      "supports_since": true,
+      "system": "{{@ system @}}",
+      "type": "rest"
+    },
+    "type": "pipe"
+  },
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-collect",
+    "exclude_completeness": [
+      "{{@ system @}}-{{@ datatype @}}-share",
+      "{{@ system @}}-{{@ datatype @}}-event2"
+    ],
+    "namespaced_identifiers": false,
+    "pump": {
+      "run_at_startup_if_not_populated": true
+    },
+    "source": {
+      "datasets": [
+        "{{@ system @}}-{{@ datatype @}}-all",
+        "{{@ system @}}-{{@ datatype @}}-event2"
+      ],
+      "type": "merge_datasets"
+    },
+    "transform": [
+      {
+        "properties": {
+          "primary_key": "id",
+          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
+        },
+        "template": "transform-collect-rest",
+        "type": "template"
+      },
+      {
+        "rules": {
+          "default": [
+            [
+              "copy",
+              "*"
+            ],
+            [
+              "add",
+              "$last-modified",
+              [
+                "datetime-parse",
+                "%Y-%m-%dT%H:%M:%S%z",
+                "_S.updated_at"
+              ]
+            ]
+          ]
+        },
+        "type": "dtl"
+      }
+    ],
+    "type": "pipe"
+  },
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-event",
+    "compaction": {
+      "keep_versions": 1
+    },
+    "namespaced_identifiers": false,
+    "pump": {
+      "run_at_startup_if_not_populated": true
+    },
+    "source": {
+      "system": "{{@ system @}}",
+      "type": "http_endpoint"
+    },
+    "transform": [
+      {
+        "rules": {
+          "default": [
+            [
+              "copy",
+              "*"
+            ],
+            [
+              "add",
+              "_id",
+              [
+                "string",
+                "_S.id"
+              ]
+            ]
+          ]
+        },
+        "type": "dtl"
+      }
+    ],
+    "type": "pipe"
+  },
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-event2",
+    "namespaced_identifiers": false,
+    "sink": {
+      "deletion_tracking": false,
+      "set_initial_offset": "onload"
+    },
+    "source": {
+      "dataset": "{{@ system @}}-{{@ datatype @}}-event",
+      "type": "dataset"
+    },
+    "transform": {
+      "rules": {
+        "default": [
+          [
+            "copy",
+            "*"
+          ]
+        ]
+      },
+      "type": "dtl"
+    },
+    "type": "pipe"
+  },
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-registerwebhook",
+    "comment": "WARNING! This pipe is generated from the template of the 'customer' datatype and changes will be silently ignored during collapse. For more information see the connectorpy README.",
+    "namespaced_identifiers": false,
+    "pump": {
+      "run_at_startup_if_not_populated": true
+    },
+    "sink": {
+      "deletion_tracking": false,
+      "set_initial_offset": "onload"
+    },
+    "source": {
+      "entities": [
+        {
+          "_id": "{{@ datatype @}}-create",
+          "_updated": 0,
+          "properties": {
+            "webhook": {
+              "address": "https://datahub-3fc8150c.sesam.cloud/api/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
+              "topic": "{{@ datatype @}}s/create"
+            }
+          }
+        },
+        {
+          "_id": "{{@ datatype @}}-update",
+          "_updated": 1,
+          "properties": {
+            "webhook": {
+              "address": "https://datahub-3fc8150c.sesam.cloud/api/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
+              "topic": "{{@ datatype @}}s/update"
+            }
+          }
+        },
+        {
+          "_id": "{{@ datatype @}}-delete",
+          "_updated": 2,
+          "properties": {
+            "webhook": {
+              "address": "https://datahub-3fc8150c.sesam.cloud/api/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
+              "topic": "{{@ datatype @}}s/delete"
+            }
+          }
+        }
+      ],
+      "supports_since": true,
+      "type": "embedded"
+    },
+    "transform": [
+      {
+        "rules": {
+          "default": [
+            [
+              "copy",
+              "properties"
+            ],
+            [
+              "add",
+              "id",
+              [
+                "first",
+                [
+                  "hops",
+                  {
+                    "datasets": [
+                      "{{@ system @}}-{{@ datatype @}}-registerwebhook sink"
+                    ],
+                    "return": [
+                      "first",
+                      "sink.insert_response.value.id"
+                    ],
+                    "where": [
+                      [
+                        "eq",
+                        "_S._id",
+                        "sink._id"
+                      ]
+                    ]
+                  }
+                ]
+              ]
+            ],
+            [
+              "add",
+              "$operation",
+              [
+                "if",
+                [
+                  "is-not-null",
+                  "_T.id"
+                ],
+                "lookup",
+                "insert"
+              ]
+            ]
+          ]
+        },
+        "type": "dtl"
+      },
+      {
+        "allowed_status_codes": "200,404",
+        "operation": "webhook-lookup",
+        "replace_entity": false,
+        "response_property": "lookup_response",
+        "response_status_property": "lookup_status_code",
+        "side_effects": false,
+        "system": "{{@ system @}}",
+        "trace": true,
+        "trigger_on": {
+          "key": "$operation",
+          "value": "lookup"
+        },
+        "type": "rest"
+      },
+      {
+        "rules": {
+          "default": [
+            [
+              "add",
+              "payload",
+              [
+                "dict",
+                "webhook",
+                "_S.properties.webhook"
+              ]
+            ],
+            [
+              "copy",
+              "*"
+            ],
+            [
+              "comment",
+              "TODO: we should compare the state of the actual object vs our desired state."
+            ],
+            [
+              "discard",
+              [
+                "or",
+                [
+                  "eq",
+                  404,
+                  "_T.lookup_status_code"
+                ],
+                [
+                  "eq",
+                  "_S.$operation",
+                  "insert"
+                ]
+              ]
+            ]
+          ]
+        },
+        "type": "dtl"
+      },
+      {
+        "allowed_status_codes": "200,201",
+        "operation": "webhook-insert",
+        "replace_entity": false,
+        "response_property": "insert_response",
+        "response_status_property": "insert_status_code",
+        "side_effects": true,
+        "system": "{{@ system @}}",
+        "trace": {
+          "log_request_body_maxsize": 10000,
+          "log_response_body_maxsize": 10000
+        },
+        "type": "rest"
+      }
+    ],
+    "type": "pipe"
+  },
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-share",
+    "batch_size": 1,
+    "namespaced_identifiers": false,
+    "sink": {
+      "deletion_tracking": false,
+      "set_initial_offset": "onload"
+    },
+    "source": {
+      "dataset": "{{@ system @}}-{{@ datatype @}}-transform",
+      "type": "dataset"
+    },
+    "transform": [
+      {
+        "rules": {
+          "default": [
+            [
+              "copy",
+              "*",
+              [
+                "list",
+                "_*",
+                "$*",
+                "variants"
+              ]
+            ],
+            [
+              "comment",
+              "temp fix for IS-17663"
+            ],
+            [
+              "add",
+              "variants",
+              [
+                "list",
+                [
+                  "apply",
+                  "recursive-merge",
+                  [
+                    "dict",
+                    "a",
+                    [
+                      "map",
+                      [
+                        "dict",
+                        [
+                          "keys",
+                          "_."
+                        ],
+                        [
+                          "first",
+                          [
+                            "values",
+                            "_."
+                          ]
+                        ]
+                      ],
+                      "_S.variants"
+                    ],
+                    "b",
+                    [
+                      "map",
+                      [
+                        "dict",
+                        [
+                          "keys",
+                          "_."
+                        ],
+                        [
+                          "first",
+                          [
+                            "values",
+                            "_."
+                          ]
+                        ]
+                      ],
+                      "_S.variants"
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "add",
+              "$payload",
+              [
+                "dict",
+                "{{@ datatype @}}",
+                "_T."
+              ]
+            ],
+            [
+              "copy",
+              "*"
+            ]
+          ],
+          "merge-lists": [
+            [
+              "add",
+              "result",
+              [
+                "map",
+                [
+                  "if",
+                  [
+                    "and",
+                    [
+                      "is-dict",
+                      [
+                        "nth",
+                        "_.key",
+                        "_S.a"
+                      ]
+                    ],
+                    [
+                      "is-dict",
+                      "_.value"
+                    ]
+                  ],
+                  [
+                    "apply",
+                    "recursive-merge",
+                    [
+                      "dict",
+                      "a",
+                      [
+                        "nth",
+                        "_.key",
+                        "_S.a"
+                      ],
+                      "b",
+                      "_.value"
+                    ]
+                  ],
+                  "_.value"
+                ],
+                [
+                  "enumerate",
+                  "_S.b"
+                ]
+              ]
+            ]
+          ],
+          "recursive-merge": [
+            [
+              "merge",
+              [
+                "dict",
+                [
+                  "map",
+                  [
+                    "list",
+                    "_.",
+                    [
+                      "if",
+                      [
+                        "and",
+                        [
+                          "is-list",
+                          [
+                            "path",
+                            "_.",
+                            "_S.a"
+                          ]
+                        ],
+                        [
+                          "is-list",
+                          [
+                            "path",
+                            "_.",
+                            "_S.b"
+                          ]
+                        ]
+                      ],
+                      [
+                        "path",
+                        "result",
+                        [
+                          "apply",
+                          "merge-lists",
+                          [
+                            "dict",
+                            "a",
+                            [
+                              "path",
+                              "_.",
+                              "_S.a"
+                            ],
+                            "b",
+                            [
+                              "first",
+                              [
+                                "path",
+                                "_.",
+                                "_S.b"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [
+                        "if",
+                        [
+                          "and",
+                          [
+                            "is-dict",
+                            [
+                              "path",
+                              "_.",
+                              "_S.a"
+                            ]
+                          ],
+                          [
+                            "is-dict",
+                            [
+                              "path",
+                              "_.",
+                              "_S.b"
+                            ]
+                          ]
+                        ],
+                        [
+                          "apply",
+                          "recursive-merge",
+                          [
+                            "dict",
+                            "a",
+                            [
+                              "path",
+                              "_.",
+                              "_S.a"
+                            ],
+                            "b",
+                            [
+                              "path",
+                              "_.",
+                              "_S.b"
+                            ]
+                          ]
+                        ],
+                        [
+                          "if",
+                          [
+                            "has-key",
+                            "_.",
+                            "_S.b"
+                          ],
+                          [
+                            "path",
+                            "_.",
+                            "_S.b"
+                          ],
+                          [
+                            "path",
+                            "_.",
+                            "_S.a"
+                          ]
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "distinct",
+                    [
+                      "combine",
+                      [
+                        "keys",
+                        "_S.a"
+                      ],
+                      [
+                        "keys",
+                        "_S.b"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        },
+        "type": "dtl"
+      },
+      {
+        "properties": {
+          "operation_delete": "{{@ datatype @}}-delete",
+          "operation_insert": "{{@ datatype @}}-insert",
+          "operation_lookup": "{{@ datatype @}}-lookup",
+          "operation_update": "{{@ datatype @}}-update",
+          "primary_key": "id",
+          "rest_system": "{{@ system @}}",
+          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
+        },
+        "template": "transform-share-rest",
+        "type": "template"
+      }
+    ],
+    "type": "pipe"
+  }
+]
