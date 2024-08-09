@@ -33,6 +33,40 @@
     },
     "transform": [
       {
+        "rules": {
+          "default": [
+            [
+              "copy",
+              "*",
+              "variants"
+            ],
+            [
+              "add",
+              "variants",
+              [
+                "apply",
+                "keep_position1",
+                "_S.variants"
+              ]
+            ]
+          ],
+          "keep_position1": [
+            [
+              "filter", [
+                "eq", 
+                "_S.position", 
+                1
+              ]
+            ],
+            [
+              "copy", 
+              "*"
+            ]
+          ]
+        },
+        "type": "dtl"
+      },
+      {
         "properties": {
           "primary_key": "id",
           "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
@@ -125,7 +159,6 @@
   },
   {
     "_id": "{{@ system @}}-{{@ datatype @}}-registerwebhook",
-    "comment": "WARNING! This pipe is generated from the template of the 'customer' datatype and changes will be silently ignored during collapse. For more information see the connectorpy README.",
     "namespaced_identifiers": false,
     "pump": {
       "run_at_startup_if_not_populated": true

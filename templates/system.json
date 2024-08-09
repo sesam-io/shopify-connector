@@ -154,42 +154,6 @@
         "payload_property": "product",
         "url": "products/{{entity.id}}.json"
       },
-      "variant-insert": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "payload_property": "variant",
-        "url": "variants.json"
-      },
-      "variant-list": {
-        "id_expression": "{{ id }}",
-        "method": "GET",
-        "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
-        "next_page_termination_strategy": [
-          "next-page-link-empty"
-        ],
-        "page_size": 100,
-        "payload_property": "variants",
-        "updated_expression": "{{ updated_at }}",
-        "url": "variants.json?limit={{page_size}}&updated_at_min={{since}}"
-      },
-      "variant-lookup": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "GET",
-        "payload_property": "variant",
-        "url": "variants/{{entity.id}}.json"
-      },
-      "variant-update": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "PUT",
-        "payload_property": "variant",
-        "url": "variants/{{entity.id}}.json"
-      },
       "webhook-delete": {
         "method": "DELETE",
         "url": "webhooks/{{ entity['id'] }}.json"
