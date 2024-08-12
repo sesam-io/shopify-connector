@@ -33,6 +33,40 @@
     },
     "transform": [
       {
+        "rules": {
+          "default": [
+            [
+              "copy",
+              "*",
+              "variants"
+            ],
+            [
+              "add",
+              "variants",
+              [
+                "apply",
+                "keep_position1",
+                "_S.variants"
+              ]
+            ]
+          ],
+          "keep_position1": [
+            [
+              "filter", [
+                "eq", 
+                "_S.position", 
+                1
+              ]
+            ],
+            [
+              "copy", 
+              "*"
+            ]
+          ]
+        },
+        "type": "dtl"
+      },
+      {
         "properties": {
           "primary_key": "id",
           "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
@@ -150,7 +184,7 @@
           "_updated": 1,
           "properties": {
             "webhook": {
-              "address": "{{@ service_url @}}/api/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
+              "address": "{{@ service_url @}}/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
               "topic": "{{@ datatype @}}s/update"
             }
           }
@@ -160,7 +194,7 @@
           "_updated": 2,
           "properties": {
             "webhook": {
-              "address": "{{@ service_url @}}/api/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
+              "address": "{{@ service_url @}}/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
               "topic": "{{@ datatype @}}s/delete"
             }
           }
@@ -314,7 +348,64 @@
               [
                 "list",
                 "_*",
-                "$*"
+                "$*",
+                "variants"
+              ]
+            ],
+            [
+              "comment",
+              "temp fix for IS-17663"
+            ],
+            [
+              "add",
+              "variants",
+              [
+                "list",
+                [
+                  "apply",
+                  "recursive-merge",
+                  [
+                    "dict",
+                    "a",
+                    [
+                      "map",
+                      [
+                        "dict",
+                        [
+                          "keys",
+                          "_."
+                        ],
+                        [
+                          "first",
+                          [
+                            "values",
+                            "_."
+                          ]
+                        ]
+                      ],
+                      "_S.variants"
+                    ],
+                    "b",
+                    [
+                      "map",
+                      [
+                        "dict",
+                        [
+                          "keys",
+                          "_."
+                        ],
+                        [
+                          "first",
+                          [
+                            "values",
+                            "_."
+                          ]
+                        ]
+                      ],
+                      "_S.variants"
+                    ]
+                  ]
+                ]
               ]
             ],
             [
@@ -329,6 +420,189 @@
             [
               "copy",
               "*"
+            ]
+          ],
+          "merge-lists": [
+            [
+              "add",
+              "result",
+              [
+                "map",
+                [
+                  "if",
+                  [
+                    "and",
+                    [
+                      "is-dict",
+                      [
+                        "nth",
+                        "_.key",
+                        "_S.a"
+                      ]
+                    ],
+                    [
+                      "is-dict",
+                      "_.value"
+                    ]
+                  ],
+                  [
+                    "apply",
+                    "recursive-merge",
+                    [
+                      "dict",
+                      "a",
+                      [
+                        "nth",
+                        "_.key",
+                        "_S.a"
+                      ],
+                      "b",
+                      "_.value"
+                    ]
+                  ],
+                  "_.value"
+                ],
+                [
+                  "enumerate",
+                  "_S.b"
+                ]
+              ]
+            ]
+          ],
+          "recursive-merge": [
+            [
+              "merge",
+              [
+                "dict",
+                [
+                  "map",
+                  [
+                    "list",
+                    "_.",
+                    [
+                      "if",
+                      [
+                        "and",
+                        [
+                          "is-list",
+                          [
+                            "path",
+                            "_.",
+                            "_S.a"
+                          ]
+                        ],
+                        [
+                          "is-list",
+                          [
+                            "path",
+                            "_.",
+                            "_S.b"
+                          ]
+                        ]
+                      ],
+                      [
+                        "path",
+                        "result",
+                        [
+                          "apply",
+                          "merge-lists",
+                          [
+                            "dict",
+                            "a",
+                            [
+                              "path",
+                              "_.",
+                              "_S.a"
+                            ],
+                            "b",
+                            [
+                              "first",
+                              [
+                                "path",
+                                "_.",
+                                "_S.b"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ],
+                      [
+                        "if",
+                        [
+                          "and",
+                          [
+                            "is-dict",
+                            [
+                              "path",
+                              "_.",
+                              "_S.a"
+                            ]
+                          ],
+                          [
+                            "is-dict",
+                            [
+                              "path",
+                              "_.",
+                              "_S.b"
+                            ]
+                          ]
+                        ],
+                        [
+                          "apply",
+                          "recursive-merge",
+                          [
+                            "dict",
+                            "a",
+                            [
+                              "path",
+                              "_.",
+                              "_S.a"
+                            ],
+                            "b",
+                            [
+                              "path",
+                              "_.",
+                              "_S.b"
+                            ]
+                          ]
+                        ],
+                        [
+                          "if",
+                          [
+                            "has-key",
+                            "_.",
+                            "_S.b"
+                          ],
+                          [
+                            "path",
+                            "_.",
+                            "_S.b"
+                          ],
+                          [
+                            "path",
+                            "_.",
+                            "_S.a"
+                          ]
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "distinct",
+                    [
+                      "combine",
+                      [
+                        "keys",
+                        "_S.a"
+                      ],
+                      [
+                        "keys",
+                        "_S.b"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
             ]
           ]
         },
