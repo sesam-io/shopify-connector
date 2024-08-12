@@ -1,6 +1,6 @@
 [
   {
-    "_id": "{{@ system @}}-inventoryItem-all",
+    "_id": "{{@ system @}}-{{@ datatype @}}-all",
     "namespaced_identifiers": false,
     "pump": {
       "run_at_startup_if_not_populated": true,
@@ -28,7 +28,7 @@
         "type": "dtl"
       },
       {
-        "operation": "inventoryItem-lookup",
+        "operation": "{{@ datatype @}}-lookup",
         "system": "{{@ system @}}",
         "type": "rest"
       },
@@ -55,23 +55,23 @@
     "type": "pipe"
   },
   {
-    "_id": "{{@ system @}}-inventoryItem-collect",
+    "_id": "{{@ system @}}-{{@ datatype @}}-collect",
     "exclude_completeness": [
-      "{{@ system @}}-inventoryItem-share"
+      "{{@ system @}}-{{@ datatype @}}-share"
     ],
     "namespaced_identifiers": false,
     "pump": {
       "run_at_startup_if_not_populated": true
     },
     "source": {
-      "dataset": "{{@ system @}}-inventoryItem-all",
+      "dataset": "{{@ system @}}-{{@ datatype @}}-all",
       "type": "dataset"
     },
     "transform": [
       {
         "properties": {
           "primary_key": "id",
-          "share_dataset": "{{@ system @}}-inventoryItem-share"
+          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
         },
         "template": "transform-collect-rest",
         "type": "template"
@@ -100,7 +100,7 @@
     "type": "pipe"
   },
   {
-    "_id": "{{@ system @}}-inventoryItem-share",
+    "_id": "{{@ system @}}-{{@ datatype @}}-share",
     "batch_size": 1,
     "namespaced_identifiers": false,
     "sink": {
@@ -108,7 +108,7 @@
       "set_initial_offset": "onload"
     },
     "source": {
-      "dataset": "{{@ system @}}-inventoryItem-transform",
+      "dataset": "{{@ system @}}-{{@ datatype @}}-transform",
       "type": "dataset"
     },
     "transform": {
@@ -144,73 +144,25 @@
         },
         {
           "properties": {
-            "operation_lookup": "inventoryItem-lookup",
-            "operation_update": "inventoryItem-update",
+            "operation_lookup": "{{@ datatype @}}-lookup",
+            "operation_update": "{{@ datatype @}}-update",
             "primary_key": "id",
             "rest_system": "{{@ system @}}",
             "rewrite_rules_lookup": {
               "rewrite_lookup": [
                 [
                   "merge",
-                  "_S.inventoryItem"
+                  "_S.{{@ datatype @}}"
                 ]
               ]
             },
-            "share_dataset": "{{@ system @}}-inventoryItem-share"
+            "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
           },
           "template": "transform-share-rest",
           "type": "template"
         }
       ],
       "type": "chained"
-    },
-    "type": "pipe"
-  },
-  {
-    "_id": "{{@ system @}}-inventoryItem-transform",
-    "source": {
-      "dataset": "{{@ system @}}-inventoryItem-collect",
-      "supports_signalling": false,
-      "type": "dataset"
-    },
-    "transform": {
-      "rules": {
-        "based-on": [
-          [
-            "copy",
-            "*",
-            [
-              "list",
-              "_*",
-              "$*"
-            ]
-          ]
-        ],
-        "default": [
-          [
-            "add",
-            "$based_on",
-            [
-              "apply",
-              "based-on",
-              "_S."
-            ]
-          ],
-          [
-            "add",
-            "$based_on_properties",
-            [
-              "list",
-              "cost"
-            ]
-          ],
-          [
-            "copy",
-            "*"
-          ]
-        ]
-      },
-      "type": "dtl"
     },
     "type": "pipe"
   }

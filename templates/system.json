@@ -62,13 +62,13 @@
       "payload_property": "customer",
       "url": "customers/{{entity.id}}.json"
     },
-    "inventoryItem-lookup": {
+    "inventoryitem-lookup": {
       "id_expression": "{{ id }}",
       "method": "GET",
       "payload_property": "inventory_item",
       "url": "inventory_items/{{ entity.id }}.json"
     },
-    "inventoryItem-update": {
+    "inventoryitem-update": {
       "headers": {
         "Content-Type": "application/json"
       },
