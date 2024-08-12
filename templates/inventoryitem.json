@@ -3,10 +3,11 @@
     "_id": "{{@ system @}}-{{@ datatype @}}-all",
     "namespaced_identifiers": false,
     "pump": {
-      "run_at_startup_if_not_populated": true
+      "run_at_startup_if_not_populated": true,
+      "schedule_interval": 300
     },
     "source": {
-      "dataset": "{{@ system @}}-product-collect",
+      "dataset": "{{@ system @}}-variant-collect",
       "type": "dataset"
     },
     "transform": [
@@ -19,25 +20,24 @@
             ],
             [
               "add",
-              "inventory_ids",
-              "_S.variants.inventory_item_id"
+              "id",
+              "_S.inventory_item_id"
             ]
           ]
         },
         "type": "dtl"
       },
       {
-        "operation": "{{@ datatype @}}-list",
-        "side_effects": false,
+        "operation": "{{@ datatype @}}-lookup",
         "system": "{{@ system @}}",
         "type": "rest"
       },
       {
         "rules": {
-          "create_{{@ datatype @}}": [
+          "default": [
             [
-              "copy",
-              "*"
+              "merge",
+              "_S.response"
             ],
             [
               "add",
@@ -45,16 +45,6 @@
               [
                 "string",
                 "_S.id"
-              ]
-            ]
-          ],
-          "default": [
-            [
-              "create-child",
-              [
-                "apply",
-                "create_{{@ datatype @}}",
-                "_S.response"
               ]
             ]
           ]
@@ -65,7 +55,10 @@
     "type": "pipe"
   },
   {
-    "_id": "{{@ system @}}-{{@ datatype @}}-all2",
+    "_id": "{{@ system @}}-{{@ datatype @}}-collect",
+    "exclude_completeness": [
+      "{{@ system @}}-{{@ datatype @}}-share"
+    ],
     "namespaced_identifiers": false,
     "pump": {
       "run_at_startup_if_not_populated": true
@@ -74,18 +67,15 @@
       "dataset": "{{@ system @}}-{{@ datatype @}}-all",
       "type": "dataset"
     },
-    "transform": {
-      "type": "emit_children"
-    },
-    "type": "pipe"
-  },
-  {
-    "_id": "{{@ system @}}-{{@ datatype @}}-collect",
-    "source": {
-      "dataset": "{{@ system @}}-{{@ datatype @}}-all2",
-      "type": "dataset"
-    },
     "transform": [
+      {
+        "properties": {
+          "primary_key": "id",
+          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
+        },
+        "template": "transform-collect-rest",
+        "type": "template"
+      },
       {
         "rules": {
           "default": [
@@ -121,73 +111,59 @@
       "dataset": "{{@ system @}}-{{@ datatype @}}-transform",
       "type": "dataset"
     },
-    "transform": [
-      {
-        "rules": {
-          "default": [
-            [
-              "if",
+    "transform": {
+      "transforms": [
+        {
+          "rules": {
+            "default": [
               [
-                "is-empty",
+                "copy",
+                "*",
                 [
-                  "literal",
-                  "id"
+                  "list",
+                  "_*",
+                  "$*"
                 ]
               ],
               [
                 "add",
-                "$discard",
-                "no inserts available"
-              ]
-            ],
-            [
-              "copy",
-              "*",
+                "$payload",
+                [
+                  "dict",
+                  "inventory_item",
+                  "_T."
+                ]
+              ],
               [
-                "list",
-                "$*",
-                "_*"
-              ]
-            ],
-            [
-              "add",
-              "$payload",
-              [
-                "dict",
-                "inventory_item",
-                "_T."
-              ]
-            ],
-            [
-              "copy",
-              "*"
-            ]
-          ]
-        },
-        "type": "dtl"
-      },
-      {
-        "properties": {
-          "operation_delete": "{{@ datatype @}}-delete",
-          "operation_insert": "{{@ datatype @}}-insert",
-          "operation_lookup": "{{@ datatype @}}-lookup",
-          "operation_update": "{{@ datatype @}}-update",
-          "primary_key": "id",
-          "rest_system": "{{@ system @}}",
-          "rewrite_rules_lookup": {
-            "lookup_rewrite": [
-              [
-                "merge",
-                "_S.inventory_item"
+                "copy",
+                "*"
               ]
             ]
           },
-          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
+          "type": "dtl"
         },
-        "template": "transform-share-rest",
-        "type": "template"
-      }
-    ],
+        {
+          "properties": {
+            "operation_lookup": "{{@ datatype @}}-lookup",
+            "operation_update": "{{@ datatype @}}-update",
+            "primary_key": "id",
+            "rest_system": "{{@ system @}}",
+            "rewrite_rules_lookup": {
+              "rewrite_lookup": [
+                [
+                  "merge",
+                  "_S.{{@ datatype @}}"
+                ]
+              ]
+            },
+            "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
+          },
+          "template": "transform-share-rest",
+          "type": "template"
+        }
+      ],
+      "type": "chained"
+    },
     "type": "pipe"
   }
 ]
