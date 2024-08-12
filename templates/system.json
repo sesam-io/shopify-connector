@@ -62,18 +62,18 @@
       "payload_property": "customer",
       "url": "customers/{{entity.id}}.json"
     },
-    "inventoryitem-lookup": {
+    "inventoryItem-lookup": {
       "id_expression": "{{ id }}",
       "method": "GET",
       "payload_property": "inventory_item",
-      "url": "inventory_items/{{ entity.inventory_item_id }}.json"
+      "url": "inventory_items/{{ entity.id }}.json"
     },
-    "inventoryitem-update": {
+    "inventoryItem-update": {
       "headers": {
         "Content-Type": "application/json"
       },
       "method": "PUT",
-      "url": "inventory_items/{{ id }}.json"
+      "url": "inventory_items/{{ entity.id }}.json"
     },
     "order-insert": {
       "headers": {
