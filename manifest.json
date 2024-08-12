@@ -29,15 +29,6 @@
       "label": "Product",
       "template": "templates/product.json"
     },
-    "variant": {
-      "label": "Variant",
-      "template": "templates/variant.json"
-    },
-    "webhook": {
-      "label": "Webhook",
-      "template": "templates/webhook.json"
-    }
-
     "webhook": {
       "label": "Webhook",
       "template": "templates/webhook.json"
