@@ -7,7 +7,7 @@
       "schedule_interval": 300
     },
     "source": {
-      "dataset": "{{@ system @}}-variant-collect",
+      "dataset": "{{@ system @}}-product-collect",
       "type": "dataset"
     },
     "transform": [
@@ -21,7 +21,10 @@
             [
               "add",
               "id",
-              "_S.inventory_item_id"
+              [
+                "first",
+                "_S.variants.inventory_item_id"
+              ]
             ]
           ]
         },
