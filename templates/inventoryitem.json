@@ -19,6 +19,16 @@
               "_id"
             ],
             [
+              "discard",
+              [
+                "is-not-empty",
+                [
+                  "first",
+                  "_S.variants.inventory_item_id"
+                ]
+              ]
+            ],
+            [
               "add",
               "id",
               [
