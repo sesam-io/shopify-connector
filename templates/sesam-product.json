@@ -1,0 +1,303 @@
+[
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-all",
+    "namespaced_identifiers": false,
+    "source": {
+      "dataset": "{{@ system @}}-{{@ parent @}}-collect",
+      "type": "dataset"
+    },
+    "transform": {
+      "rules": {
+        "default": [
+          [
+            "copy",
+            "*",
+            "variants"
+          ],
+          [
+            "create-child",
+            [
+              "apply",
+              "release-variants",
+              "_S.variants"
+            ]
+          ]
+        ],
+        "release-variants": [
+          [
+            "add",
+            "$original_id",
+            "_R._T._id"
+          ],
+          [
+            "add",
+            "_id",
+            [
+              "string",
+              "_S.id"
+            ]
+          ],
+          [
+            "add",
+            "variants",
+            [
+              "list",
+              "_S."
+            ]
+          ],
+          [
+            "merge",
+            "_R._T"
+          ]
+        ]
+      },
+      "type": "dtl"
+    },
+    "type": "pipe"
+  },
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-all2",
+    "namespaced_identifiers": false,
+    "source": {
+      "dataset": "{{@ system @}}-{{@ datatype @}}-all",
+      "type": "dataset"
+    },
+    "transform": {
+      "type": "emit_children"
+    },
+    "type": "pipe"
+  },
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-collect",
+    "exclude_completeness": [
+      "{{@ system @}}-{{@ datatype @}}-share",
+      "{{@ system @}}-{{@ parent @}}-event2"
+    ],
+    "source": {
+      "dataset": "{{@ system @}}-{{@ datatype @}}-all2",
+      "type": "dataset"
+    },
+    "transform": [
+      {
+        "properties": {
+          "primary_key": "id",
+          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
+        },
+        "template": "transform-collect-rest",
+        "type": "template"
+      },
+      {
+        "rules": {
+          "default": [
+            [
+              "copy",
+              "*"
+            ],
+            [
+              "add",
+              "$last-modified",
+              [
+                "max",
+                "_.",
+                [
+                  "list",
+                  [
+                    "datetime-parse",
+                    "%Y-%m-%dT%H:%M:%S%z",
+                    [
+                      "first",
+                      "_S.variants.updated_at"
+                    ]
+                  ],
+                  "_S.$last-modified"
+                ]
+              ]
+            ]
+          ]
+        },
+        "type": "dtl"
+      }
+    ],
+    "type": "pipe"
+  },
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-share",
+    "batch_size": 1,
+    "namespaced_identifiers": false,
+    "sink": {
+      "deletion_tracking": false,
+      "set_initial_offset": "onload"
+    },
+    "source": {
+      "dataset": "{{@ system @}}-{{@ datatype @}}-transform",
+      "type": "dataset"
+    },
+    "transform": [
+      {
+        "rules": {
+          "default": [
+            [
+              "copy",
+              "*",
+              [
+                "list",
+                "_*",
+                "$*"
+              ]
+            ],
+            [
+              "comment",
+              "temp fix for IS-17663"
+            ],
+            [
+              "copy",
+              "*"
+            ]
+          ]
+        },
+        "type": "dtl"
+      },
+      {
+        "properties": {
+          "client_side_patching": true,
+          "operation_delete": "{{@ parent @}}-delete",
+          "operation_insert": "{{@ parent @}}-insert",
+          "operation_lookup": "{{@ parent @}}-lookup",
+          "operation_update": "{{@ parent @}}-update",
+          "primary_key": "id",
+          "rest_system": "{{@ system @}}",
+          "rewrite_rules_lookup": {
+            "replace_response_body": [
+              [
+                "copy",
+                "*",
+                "variants"
+              ],
+              [
+                "filter",
+                [
+                  "neq",
+                  "_S.id",
+                  [
+                    "first",
+                    "_R._S.$source.variants.id"
+                  ]
+                ]
+              ],
+              [
+                "add",
+                "variants",
+                [
+                  "apply",
+                  "strip_variants",
+                  "_S.variants"
+                ]
+              ]
+            ],
+            "rewrite_lookup": [
+              [
+                "copy",
+                "*",
+                "response_body"
+              ],
+              [
+                "add",
+                "$original_response_body",
+                "_S.response_body"
+              ],
+              [
+                "add",
+                "response_body",
+                [
+                  "apply",
+                  "replace_response_body",
+                  "_S.response_body"
+                ]
+              ]
+            ],
+            "strip_variants": [
+              [
+                "filter",
+                [
+                  "eq",
+                  "_S.id",
+                  [
+                    "first",
+                    "_R._S.$source.variants.id"
+                  ]
+                ]
+              ],
+              [
+                "copy",
+                "*"
+              ]
+            ]
+          },
+          "rewrite_rules_payload": {
+            "merge_old_payload": [
+              [
+                "copy",
+                "*",
+                "variants"
+              ]
+            ],
+            "rewrite_update_payload_after_patch": [
+              [
+                "merge",
+                [
+                  "apply",
+                  "merge_old_payload",
+                  "_S._payload"
+                ]
+              ],
+              [
+                "add",
+                "variants",
+                [
+                  "map",
+                  "_.",
+                  [
+                    "sorted",
+                    [
+                      "max",
+                      "_.position"
+                    ],
+                    [
+                      "combine",
+                      "_S._payload.variants",
+                      [
+                        "filter",
+                        [
+                          "neq",
+                          "_.id",
+                          [
+                            "first",
+                            "_S._payload.variants.id"
+                          ]
+                        ],
+                        "_P._S.$original_response_body.variants"
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "add",
+                "$payload",
+                [
+                  "dict",
+                  "{{@ parent @}}",
+                  "_T."
+                ]
+              ]
+            ]
+          },
+          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
+        },
+        "template": "transform-share-rest",
+        "type": "template"
+      }
+    ],
+    "type": "pipe"
+  }
+]
