@@ -12,6 +12,64 @@
       "system": "{{@ system @}}",
       "type": "rest"
     },
+    "transform": {
+      "rules": {
+        "default": [
+          [
+            "copy",
+            "*",
+            "variants"
+          ],
+          [
+            "create-child",
+            [
+              "apply",
+              "release-variants",
+              "_S.variants"
+            ]
+          ]
+        ],
+        "release-variants": [
+          [
+            "add",
+            "$original_id",
+            "_R._T._id"
+          ],
+          [
+            "add",
+            "_id",
+            [
+              "string",
+              "_S.id"
+            ]
+          ],
+          [
+            "add",
+            "variants",
+            [
+              "list",
+              "_S."
+            ]
+          ],
+          [
+            "merge",
+            "_R._T"
+          ]
+        ]
+      },
+      "type": "dtl"
+    },
+    "type": "pipe"
+  },
+  {
+    "_id": "{{@ system @}}-{{@ datatype @}}-all2",
+    "source": {
+      "dataset": "{{@ system @}}-{{@ datatype @}}-all",
+      "type": "dataset"
+    },
+    "transform": {
+      "type": "emit_children"
+    },
     "type": "pipe"
   },
   {
@@ -26,46 +84,12 @@
     },
     "source": {
       "datasets": [
-        "{{@ system @}}-{{@ datatype @}}-all",
+        "{{@ system @}}-{{@ datatype @}}-all2",
         "{{@ system @}}-{{@ datatype @}}-event2"
       ],
       "type": "merge_datasets"
     },
     "transform": [
-      {
-        "rules": {
-          "default": [
-            [
-              "copy",
-              "*",
-              "variants"
-            ],
-            [
-              "add",
-              "variants",
-              [
-                "apply",
-                "keep_position1",
-                "_S.variants"
-              ]
-            ]
-          ],
-          "keep_position1": [
-            [
-              "filter", [
-                "eq", 
-                "_S.position", 
-                1
-              ]
-            ],
-            [
-              "copy", 
-              "*"
-            ]
-          ]
-        },
-        "type": "dtl"
-      },
       {
         "properties": {
           "primary_key": "id",
@@ -116,7 +140,26 @@
           "default": [
             [
               "copy",
-              "*"
+              "*",
+              "variants"
+            ],
+            [
+              "create-child",
+              [
+                "apply",
+                "release-variants",
+                "_S.variants"
+              ]
+            ]
+          ],
+          "release-variants": [
+            [
+              "add",
+              "$original_id",
+              [
+                "string",
+                "_R._T.id"
+              ]
             ],
             [
               "add",
@@ -125,6 +168,18 @@
                 "string",
                 "_S.id"
               ]
+            ],
+            [
+              "add",
+              "variants",
+              [
+                "list",
+                "_S."
+              ]
+            ],
+            [
+              "merge",
+              "_R._T"
             ]
           ]
         },
@@ -145,15 +200,7 @@
       "type": "dataset"
     },
     "transform": {
-      "rules": {
-        "default": [
-          [
-            "copy",
-            "*"
-          ]
-        ]
-      },
-      "type": "dtl"
+      "type": "emit_children"
     },
     "type": "pipe"
   },
@@ -348,8 +395,7 @@
               [
                 "list",
                 "_*",
-                "$*",
-                "variants"
+                "$*"
               ]
             ],
             [
@@ -357,252 +403,8 @@
               "temp fix for IS-17663"
             ],
             [
-              "add",
-              "variants",
-              [
-                "list",
-                [
-                  "apply",
-                  "recursive-merge",
-                  [
-                    "dict",
-                    "a",
-                    [
-                      "map",
-                      [
-                        "dict",
-                        [
-                          "keys",
-                          "_."
-                        ],
-                        [
-                          "first",
-                          [
-                            "values",
-                            "_."
-                          ]
-                        ]
-                      ],
-                      "_S.variants"
-                    ],
-                    "b",
-                    [
-                      "map",
-                      [
-                        "dict",
-                        [
-                          "keys",
-                          "_."
-                        ],
-                        [
-                          "first",
-                          [
-                            "values",
-                            "_."
-                          ]
-                        ]
-                      ],
-                      "_S.variants"
-                    ]
-                  ]
-                ]
-              ]
-            ],
-            [
-              "add",
-              "$payload",
-              [
-                "dict",
-                "{{@ datatype @}}",
-                "_T."
-              ]
-            ],
-            [
               "copy",
               "*"
-            ]
-          ],
-          "merge-lists": [
-            [
-              "add",
-              "result",
-              [
-                "map",
-                [
-                  "if",
-                  [
-                    "and",
-                    [
-                      "is-dict",
-                      [
-                        "nth",
-                        "_.key",
-                        "_S.a"
-                      ]
-                    ],
-                    [
-                      "is-dict",
-                      "_.value"
-                    ]
-                  ],
-                  [
-                    "apply",
-                    "recursive-merge",
-                    [
-                      "dict",
-                      "a",
-                      [
-                        "nth",
-                        "_.key",
-                        "_S.a"
-                      ],
-                      "b",
-                      "_.value"
-                    ]
-                  ],
-                  "_.value"
-                ],
-                [
-                  "enumerate",
-                  "_S.b"
-                ]
-              ]
-            ]
-          ],
-          "recursive-merge": [
-            [
-              "merge",
-              [
-                "dict",
-                [
-                  "map",
-                  [
-                    "list",
-                    "_.",
-                    [
-                      "if",
-                      [
-                        "and",
-                        [
-                          "is-list",
-                          [
-                            "path",
-                            "_.",
-                            "_S.a"
-                          ]
-                        ],
-                        [
-                          "is-list",
-                          [
-                            "path",
-                            "_.",
-                            "_S.b"
-                          ]
-                        ]
-                      ],
-                      [
-                        "path",
-                        "result",
-                        [
-                          "apply",
-                          "merge-lists",
-                          [
-                            "dict",
-                            "a",
-                            [
-                              "path",
-                              "_.",
-                              "_S.a"
-                            ],
-                            "b",
-                            [
-                              "first",
-                              [
-                                "path",
-                                "_.",
-                                "_S.b"
-                              ]
-                            ]
-                          ]
-                        ]
-                      ],
-                      [
-                        "if",
-                        [
-                          "and",
-                          [
-                            "is-dict",
-                            [
-                              "path",
-                              "_.",
-                              "_S.a"
-                            ]
-                          ],
-                          [
-                            "is-dict",
-                            [
-                              "path",
-                              "_.",
-                              "_S.b"
-                            ]
-                          ]
-                        ],
-                        [
-                          "apply",
-                          "recursive-merge",
-                          [
-                            "dict",
-                            "a",
-                            [
-                              "path",
-                              "_.",
-                              "_S.a"
-                            ],
-                            "b",
-                            [
-                              "path",
-                              "_.",
-                              "_S.b"
-                            ]
-                          ]
-                        ],
-                        [
-                          "if",
-                          [
-                            "has-key",
-                            "_.",
-                            "_S.b"
-                          ],
-                          [
-                            "path",
-                            "_.",
-                            "_S.b"
-                          ],
-                          [
-                            "path",
-                            "_.",
-                            "_S.a"
-                          ]
-                        ]
-                      ]
-                    ]
-                  ],
-                  [
-                    "distinct",
-                    [
-                      "combine",
-                      [
-                        "keys",
-                        "_S.a"
-                      ],
-                      [
-                        "keys",
-                        "_S.b"
-                      ]
-                    ]
-                  ]
-                ]
-              ]
             ]
           ]
         },
@@ -610,12 +412,139 @@
       },
       {
         "properties": {
+          "client_side_patching": true,
           "operation_delete": "{{@ datatype @}}-delete",
           "operation_insert": "{{@ datatype @}}-insert",
           "operation_lookup": "{{@ datatype @}}-lookup",
           "operation_update": "{{@ datatype @}}-update",
           "primary_key": "id",
           "rest_system": "{{@ system @}}",
+          "rewrite_rules_lookup": {
+            "replace_response_body": [
+              [
+                "copy",
+                "*",
+                "variants"
+              ],
+              [
+                "filter",
+                [
+                  "neq",
+                  "_S.id",
+                  [
+                    "first",
+                    "_R._S.$source.variants.id"
+                  ]
+                ]
+              ],
+              [
+                "add",
+                "variants",
+                [
+                  "apply",
+                  "strip_variants",
+                  "_S.variants"
+                ]
+              ]
+            ],
+            "rewrite_lookup": [
+              [
+                "copy",
+                "*",
+                "response_body"
+              ],
+              [
+                "add",
+                "$original_response_body",
+                "_S.response_body"
+              ],
+              [
+                "add",
+                "response_body",
+                [
+                  "apply",
+                  "replace_response_body",
+                  "_S.response_body"
+                ]
+              ]
+            ],
+            "strip_variants": [
+              [
+                "filter",
+                [
+                  "eq",
+                  "_S.id",
+                  [
+                    "first",
+                    "_R._S.$source.variants.id"
+                  ]
+                ]
+              ],
+              [
+                "copy",
+                "*"
+              ]
+            ]
+          },
+          "rewrite_rules_payload": {
+            "merge_old_payload": [
+              [
+                "copy",
+                "*",
+                "variants"
+              ]
+            ],
+            "rewrite_update_payload_after_patch": [
+              [
+                "merge",
+                [
+                  "apply",
+                  "merge_old_payload",
+                  "_S._payload"
+                ]
+              ],
+              [
+                "add",
+                "variants",
+                [
+                  "map",
+                  "_.",
+                  [
+                    "sorted",
+                    [
+                      "max",
+                      "_.position"
+                    ],
+                    [
+                      "combine",
+                      "_S._payload.variants",
+                      [
+                        "filter",
+                        [
+                          "neq",
+                          "_.id",
+                          [
+                            "first",
+                            "_S._payload.variants.id"
+                          ]
+                        ],
+                        "_P._S.$original_response_body.variants"
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "add",
+                "$payload",
+                [
+                  "dict",
+                  "{{@ datatype @}}",
+                  "_T."
+                ]
+              ]
+            ]
+          },
           "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
         },
         "template": "transform-share-rest",
