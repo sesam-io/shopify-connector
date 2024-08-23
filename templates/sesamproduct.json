@@ -188,7 +188,7 @@
                   ],
                   [
                     "first",
-                    "_R._S.$source.variants.id"
+                    "_R._S.$source.$id"
                   ]
                 ]
               ],
