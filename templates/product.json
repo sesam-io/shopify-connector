@@ -29,6 +29,15 @@
     },
     "transform": [
       {
+        "properties": {
+          "operation_lookup_delete": "{{@ datatype @}}-lookup",
+          "primary_key": "id",
+          "rest_system": "{{@ system @}}"
+        },
+        "template": "transform-collect-rest",
+        "type": "template"
+      },
+      {
         "rules": {
           "default": [
             [

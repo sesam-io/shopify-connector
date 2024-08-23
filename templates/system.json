@@ -4,6 +4,14 @@
     "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
   },
   "operations": {
+    "countries-lookup": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "GET",
+      "payload_property": "countries",
+      "url": "countries/{{entity.id}}.json"
+    },
     "country-list": {
       "id_expression": "{{ id }}",
       "method": "GET",
