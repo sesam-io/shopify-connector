@@ -12,7 +12,7 @@
     "currency": {
       "label": "Currency",
       "sync_frequency": "slow",
-      "template": "templates/country.json"
+      "template": "templates/currency.json"
     },
     "customer": {
       "label": "Customer",

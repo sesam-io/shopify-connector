@@ -22,15 +22,6 @@
       "dataset": "{{@ system @}}-{{@ datatype @}}-all",
       "type": "dataset"
     },
-    "transform": {
-      "properties": {
-        "operation_lookup_delete": "countries-lookup",
-        "primary_key": "id",
-        "rest_system": "{{@ system @}}"
-      },
-      "template": "transform-collect-rest",
-      "type": "template"
-    },
     "type": "pipe"
   }
 ]
