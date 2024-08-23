@@ -147,12 +147,32 @@
                 "variants"
               ],
               [
-                "add",
-                "variants",
+                "merge",
                 [
-                  "apply",
-                  "strip_variants",
-                  "_S.variants"
+                  "dict",
+                  "variants",
+                  [
+                    "first",
+                    [
+                      "map",
+                      "_.",
+                      [
+                        "filter",
+                        [
+                          "eq",
+                          [
+                            "string",
+                            "_.id"
+                          ],
+                          [
+                            "first",
+                            "_R._S.$source.$id"
+                          ]
+                        ],
+                        "_S.variants"
+                      ]
+                    ]
+                  ]
                 ]
               ]
             ],
@@ -175,26 +195,6 @@
                   "replace_response_body",
                   "_S.response_body"
                 ]
-              ]
-            ],
-            "strip_variants": [
-              [
-                "filter",
-                [
-                  "eq",
-                  [
-                    "string",
-                    "_S.id"
-                  ],
-                  [
-                    "first",
-                    "_R._S.$source.$id"
-                  ]
-                ]
-              ],
-              [
-                "copy",
-                "*"
               ]
             ]
           },
