@@ -16,6 +16,9 @@
   },
   {
     "_id": "{{@ system @}}-{{@ datatype @}}-collect",
+    "exclude_completeness": [
+      "{{@ system @}}-{{@ datatype @}}-event2"
+    ],
     "namespaced_identifiers": false,
     "pump": {
       "run_at_startup_if_not_populated": true

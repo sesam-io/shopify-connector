@@ -173,17 +173,6 @@
                 "variants"
               ],
               [
-                "filter",
-                [
-                  "neq",
-                  "_S.id",
-                  [
-                    "first",
-                    "_R._S.$source.variants.id"
-                  ]
-                ]
-              ],
-              [
                 "add",
                 "variants",
                 [
@@ -219,7 +208,10 @@
                 "filter",
                 [
                   "eq",
-                  "_S.id",
+                  [
+                    "string",
+                    "_S.id"
+                  ],
                   [
                     "first",
                     "_R._S.$source.variants.id"
