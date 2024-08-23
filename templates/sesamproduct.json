@@ -135,28 +135,6 @@
     },
     "transform": [
       {
-        "rules": {
-          "default": [
-            [
-              "copy",
-              "*",
-              [
-                "list",
-                "_*",
-                "$*",
-                "id"
-              ]
-            ],
-            [
-              "add",
-              "id",
-              "_S.$original_id"
-            ]
-          ]
-        },
-        "type": "dtl"
-      },
-      {
         "properties": {
           "client_side_patching": true,
           "operation_delete": "{{@ parent @}}-delete",
