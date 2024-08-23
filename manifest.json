@@ -29,9 +29,9 @@
       "label": "Product",
       "template": "templates/product.json"
     },
-    "sesam-product": {
+    "sesamproduct": {
       "parent": "product",
-      "template": "templates/sesam-product.json"
+      "template": "templates/sesamproduct.json"
     },
     "webhook": {
       "label": "Webhook",
