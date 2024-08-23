@@ -16,10 +16,6 @@
   },
   {
     "_id": "{{@ system @}}-{{@ datatype @}}-collect",
-    "exclude_completeness": [
-      "{{@ system @}}-{{@ datatype @}}-share",
-      "{{@ system @}}-{{@ datatype @}}-event2"
-    ],
     "namespaced_identifiers": false,
     "pump": {
       "run_at_startup_if_not_populated": true
@@ -32,48 +28,6 @@
       "type": "merge_datasets"
     },
     "transform": [
-      {
-        "rules": {
-          "default": [
-            [
-              "copy",
-              "*",
-              "variants"
-            ],
-            [
-              "add",
-              "variants",
-              [
-                "apply",
-                "keep_position1",
-                "_S.variants"
-              ]
-            ]
-          ],
-          "keep_position1": [
-            [
-              "filter", [
-                "eq", 
-                "_S.position", 
-                1
-              ]
-            ],
-            [
-              "copy", 
-              "*"
-            ]
-          ]
-        },
-        "type": "dtl"
-      },
-      {
-        "properties": {
-          "primary_key": "id",
-          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
-        },
-        "template": "transform-collect-rest",
-        "type": "template"
-      },
       {
         "rules": {
           "default": [
@@ -110,27 +64,25 @@
       "system": "{{@ system @}}",
       "type": "http_endpoint"
     },
-    "transform": [
-      {
-        "rules": {
-          "default": [
+    "transform": {
+      "rules": {
+        "default": [
+          [
+            "copy",
+            "*"
+          ],
+          [
+            "add",
+            "_id",
             [
-              "copy",
-              "*"
-            ],
-            [
-              "add",
-              "_id",
-              [
-                "string",
-                "_S.id"
-              ]
+              "string",
+              "_S.id"
             ]
           ]
-        },
-        "type": "dtl"
-      }
-    ],
+        ]
+      },
+      "type": "dtl"
+    },
     "type": "pipe"
   },
   {
@@ -145,15 +97,7 @@
       "type": "dataset"
     },
     "transform": {
-      "rules": {
-        "default": [
-          [
-            "copy",
-            "*"
-          ]
-        ]
-      },
-      "type": "dtl"
+      "type": "emit_children"
     },
     "type": "pipe"
   },
@@ -322,304 +266,6 @@
           "log_response_body_maxsize": 10000
         },
         "type": "rest"
-      }
-    ],
-    "type": "pipe"
-  },
-  {
-    "_id": "{{@ system @}}-{{@ datatype @}}-share",
-    "batch_size": 1,
-    "namespaced_identifiers": false,
-    "sink": {
-      "deletion_tracking": false,
-      "set_initial_offset": "onload"
-    },
-    "source": {
-      "dataset": "{{@ system @}}-{{@ datatype @}}-transform",
-      "type": "dataset"
-    },
-    "transform": [
-      {
-        "rules": {
-          "default": [
-            [
-              "copy",
-              "*",
-              [
-                "list",
-                "_*",
-                "$*",
-                "variants"
-              ]
-            ],
-            [
-              "comment",
-              "temp fix for IS-17663"
-            ],
-            [
-              "add",
-              "variants",
-              [
-                "list",
-                [
-                  "apply",
-                  "recursive-merge",
-                  [
-                    "dict",
-                    "a",
-                    [
-                      "map",
-                      [
-                        "dict",
-                        [
-                          "keys",
-                          "_."
-                        ],
-                        [
-                          "first",
-                          [
-                            "values",
-                            "_."
-                          ]
-                        ]
-                      ],
-                      "_S.variants"
-                    ],
-                    "b",
-                    [
-                      "map",
-                      [
-                        "dict",
-                        [
-                          "keys",
-                          "_."
-                        ],
-                        [
-                          "first",
-                          [
-                            "values",
-                            "_."
-                          ]
-                        ]
-                      ],
-                      "_S.variants"
-                    ]
-                  ]
-                ]
-              ]
-            ],
-            [
-              "add",
-              "$payload",
-              [
-                "dict",
-                "{{@ datatype @}}",
-                "_T."
-              ]
-            ],
-            [
-              "copy",
-              "*"
-            ]
-          ],
-          "merge-lists": [
-            [
-              "add",
-              "result",
-              [
-                "map",
-                [
-                  "if",
-                  [
-                    "and",
-                    [
-                      "is-dict",
-                      [
-                        "nth",
-                        "_.key",
-                        "_S.a"
-                      ]
-                    ],
-                    [
-                      "is-dict",
-                      "_.value"
-                    ]
-                  ],
-                  [
-                    "apply",
-                    "recursive-merge",
-                    [
-                      "dict",
-                      "a",
-                      [
-                        "nth",
-                        "_.key",
-                        "_S.a"
-                      ],
-                      "b",
-                      "_.value"
-                    ]
-                  ],
-                  "_.value"
-                ],
-                [
-                  "enumerate",
-                  "_S.b"
-                ]
-              ]
-            ]
-          ],
-          "recursive-merge": [
-            [
-              "merge",
-              [
-                "dict",
-                [
-                  "map",
-                  [
-                    "list",
-                    "_.",
-                    [
-                      "if",
-                      [
-                        "and",
-                        [
-                          "is-list",
-                          [
-                            "path",
-                            "_.",
-                            "_S.a"
-                          ]
-                        ],
-                        [
-                          "is-list",
-                          [
-                            "path",
-                            "_.",
-                            "_S.b"
-                          ]
-                        ]
-                      ],
-                      [
-                        "path",
-                        "result",
-                        [
-                          "apply",
-                          "merge-lists",
-                          [
-                            "dict",
-                            "a",
-                            [
-                              "path",
-                              "_.",
-                              "_S.a"
-                            ],
-                            "b",
-                            [
-                              "first",
-                              [
-                                "path",
-                                "_.",
-                                "_S.b"
-                              ]
-                            ]
-                          ]
-                        ]
-                      ],
-                      [
-                        "if",
-                        [
-                          "and",
-                          [
-                            "is-dict",
-                            [
-                              "path",
-                              "_.",
-                              "_S.a"
-                            ]
-                          ],
-                          [
-                            "is-dict",
-                            [
-                              "path",
-                              "_.",
-                              "_S.b"
-                            ]
-                          ]
-                        ],
-                        [
-                          "apply",
-                          "recursive-merge",
-                          [
-                            "dict",
-                            "a",
-                            [
-                              "path",
-                              "_.",
-                              "_S.a"
-                            ],
-                            "b",
-                            [
-                              "path",
-                              "_.",
-                              "_S.b"
-                            ]
-                          ]
-                        ],
-                        [
-                          "if",
-                          [
-                            "has-key",
-                            "_.",
-                            "_S.b"
-                          ],
-                          [
-                            "path",
-                            "_.",
-                            "_S.b"
-                          ],
-                          [
-                            "path",
-                            "_.",
-                            "_S.a"
-                          ]
-                        ]
-                      ]
-                    ]
-                  ],
-                  [
-                    "distinct",
-                    [
-                      "combine",
-                      [
-                        "keys",
-                        "_S.a"
-                      ],
-                      [
-                        "keys",
-                        "_S.b"
-                      ]
-                    ]
-                  ]
-                ]
-              ]
-            ]
-          ]
-        },
-        "type": "dtl"
-      },
-      {
-        "properties": {
-          "operation_delete": "{{@ datatype @}}-delete",
-          "operation_insert": "{{@ datatype @}}-insert",
-          "operation_lookup": "{{@ datatype @}}-lookup",
-          "operation_update": "{{@ datatype @}}-update",
-          "primary_key": "id",
-          "rest_system": "{{@ system @}}",
-          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
-        },
-        "template": "transform-share-rest",
-        "type": "template"
       }
     ],
     "type": "pipe"
