@@ -206,6 +206,17 @@
                 "variants"
               ]
             ],
+            "rewrite_insert_payload": [
+              [
+                "add",
+                "$payload",
+                [
+                  "dict",
+                  "{{@ parent @}}",
+                  "_S."
+                ]
+              ]
+            ],
             "rewrite_update_payload_after_patch": [
               [
                 "merge",
