@@ -1,224 +1,222 @@
-[
-  {
-    "_id": "{{@ system @}}",
-    "headers": {
-      "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+{
+  "_id": "{{@ system @}}",
+  "headers": {
+    "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
+  },
+  "operations": {
+    "country-list": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
+      "next_page_termination_strategy": [
+        "next-page-link-empty"
+      ],
+      "page_size": 100,
+      "payload_property": "countries",
+      "url": "countries.json?limit={{page_size}}&updated_at_min={{since}}"
     },
-    "operations": {
-      "country-list": {
-        "id_expression": "{{ id }}",
-        "method": "GET",
-        "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
-        "next_page_termination_strategy": [
-          "next-page-link-empty"
-        ],
-        "page_size": 100,
-        "payload_property": "countries",
-        "url": "countries.json?limit={{page_size}}&updated_at_min={{since}}"
-      },
-      "currency-list": {
-        "id_expression": "{{ currency }}",
-        "method": "GET",
-        "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
-        "next_page_termination_strategy": [
-          "next-page-link-empty"
-        ],
-        "page_size": 100,
-        "payload_property": "currencies",
-        "url": "currencies.json?limit={{page_size}}&updated_at_min={{since}}"
-      },
-      "customer-insert": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "payload_property": "customer",
-        "url": "customers.json"
-      },
-      "customer-list": {
-        "id_expression": "{{ id }}",
-        "method": "GET",
-        "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
-        "next_page_termination_strategy": [
-          "next-page-link-empty"
-        ],
-        "page_size": 100,
-        "payload_property": "customers",
-        "updated_expression": "{{ updated_at }}",
-        "url": "customers.json?limit={{page_size}}&updated_at_min={{since}}"
-      },
-      "customer-lookup": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "GET",
-        "payload_property": "customer",
-        "url": "customers/{{entity.id}}.json"
-      },
-      "customer-update": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "PUT",
-        "payload_property": "customer",
-        "url": "customers/{{entity.id}}.json"
-      },
-      "inventoryitem-list": {
-        "id_expression": "{{ id }}",
-        "method": "GET",
-        "payload_property": "inventory_items",
-        "url": "inventory_items.json?ids={{ entity.inventory_ids }}"
-      },
-      "inventoryitem-lookup": {
-        "id_expression": "{{ id }}",
-        "method": "GET",
-        "payload_property": "inventory_item",
-        "url": "inventory_items/{{ id }}.json"
-      },
-      "inventoryitem-update": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "PUT",
-        "url": "inventory_items/{{ id }}.json"
-      },
-      "order-insert": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "payload_property": "order",
-        "url": "orders.json"
-      },
-      "order-list": {
-        "id_expression": "{{ id }}",
-        "method": "GET",
-        "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
-        "next_page_termination_strategy": [
-          "next-page-link-empty"
-        ],
-        "page_size": 100,
-        "payload_property": "orders",
-        "updated_expression": "{{ updated_at }}",
-        "url": "orders.json?status=any&limit={{page_size}}&updated_at_min={{since}}"
-      },
-      "order-lookup": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "GET",
-        "payload_property": "order",
-        "url": "orders/{{entity.id}}.json"
-      },
-      "order-update": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "PUT",
-        "payload_property": "order",
-        "url": "orders/{{entity.id}}.json"
-      },
-      "product-insert": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "payload_property": "product",
-        "url": "products.json"
-      },
-      "product-list": {
-        "id_expression": "{{ id }}",
-        "method": "GET",
-        "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
-        "next_page_termination_strategy": [
-          "next-page-link-empty"
-        ],
-        "page_size": 100,
-        "payload_property": "products",
-        "updated_expression": "{{ updated_at }}",
-        "url": "products.json?limit={{page_size}}&updated_at_min={{since}}"
-      },
-      "product-lookup": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "GET",
-        "payload_property": "product",
-        "url": "products/{{entity.id}}.json"
-      },
-      "product-update": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "PUT",
-        "payload_property": "product",
-        "url": "products/{{entity.id}}.json"
-      },
-      "variant-insert": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "payload_property": "variant",
-        "url": "variants.json"
-      },
-      "variant-list": {
-        "id_expression": "{{ id }}",
-        "method": "GET",
-        "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
-        "next_page_termination_strategy": [
-          "next-page-link-empty"
-        ],
-        "page_size": 100,
-        "payload_property": "variants",
-        "updated_expression": "{{ updated_at }}",
-        "url": "variants.json?limit={{page_size}}&updated_at_min={{since}}"
-      },
-      "variant-lookup": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "GET",
-        "payload_property": "variant",
-        "url": "variants/{{entity.id}}.json"
-      },
-      "variant-update": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "PUT",
-        "payload_property": "variant",
-        "url": "variants/{{entity.id}}.json"
-      },
-      "webhook-delete": {
-        "method": "DELETE",
-        "url": "webhooks/{{ entity['id'] }}.json"
-      },
-      "webhook-insert": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "POST",
-        "payload-type": "json",
-        "url": "webhooks.json"
-      },
-      "webhook-list": {
-        "id_expression": "{{ id }}",
-        "method": "GET",
-        "payload_property": "webhooks",
-        "url": "webhooks.json"
-      },
-      "webhook-lookup": {
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "method": "GET",
-        "payload-type": "json",
-        "url": "webhooks/{{ entity['id'] }}.json"
-      }
+    "currency-list": {
+      "id_expression": "{{ currency }}",
+      "method": "GET",
+      "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
+      "next_page_termination_strategy": [
+        "next-page-link-empty"
+      ],
+      "page_size": 100,
+      "payload_property": "currencies",
+      "url": "currencies.json?limit={{page_size}}&updated_at_min={{since}}"
     },
-    "type": "system:rest",
-    "url_pattern": "https://{{@ site_id @}}.myshopify.com/admin/api/2024-04/%s",
-    "verify_ssl": true
-  }
-]
+    "customer-insert": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "POST",
+      "payload_property": "customer",
+      "url": "customers.json"
+    },
+    "customer-list": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
+      "next_page_termination_strategy": [
+        "next-page-link-empty"
+      ],
+      "page_size": 100,
+      "payload_property": "customers",
+      "updated_expression": "{{ updated_at }}",
+      "url": "customers.json?limit={{page_size}}&updated_at_min={{since}}"
+    },
+    "customer-lookup": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "GET",
+      "payload_property": "customer",
+      "url": "customers/{{entity.id}}.json"
+    },
+    "customer-update": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "PUT",
+      "payload_property": "customer",
+      "url": "customers/{{entity.id}}.json"
+    },
+    "inventoryitem-list": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "payload_property": "inventory_items",
+      "url": "inventory_items.json?ids={{ entity.inventory_ids }}"
+    },
+    "inventoryitem-lookup": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "payload_property": "inventory_item",
+      "url": "inventory_items/{{ id }}.json"
+    },
+    "inventoryitem-update": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "PUT",
+      "url": "inventory_items/{{ id }}.json"
+    },
+    "order-insert": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "POST",
+      "payload_property": "order",
+      "url": "orders.json"
+    },
+    "order-list": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
+      "next_page_termination_strategy": [
+        "next-page-link-empty"
+      ],
+      "page_size": 100,
+      "payload_property": "orders",
+      "updated_expression": "{{ updated_at }}",
+      "url": "orders.json?status=any&limit={{page_size}}&updated_at_min={{since}}"
+    },
+    "order-lookup": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "GET",
+      "payload_property": "order",
+      "url": "orders/{{entity.id}}.json"
+    },
+    "order-update": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "PUT",
+      "payload_property": "order",
+      "url": "orders/{{entity.id}}.json"
+    },
+    "product-insert": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "POST",
+      "payload_property": "product",
+      "url": "products.json"
+    },
+    "product-list": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
+      "next_page_termination_strategy": [
+        "next-page-link-empty"
+      ],
+      "page_size": 100,
+      "payload_property": "products",
+      "updated_expression": "{{ updated_at }}",
+      "url": "products.json?limit={{page_size}}&updated_at_min={{since}}"
+    },
+    "product-lookup": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "GET",
+      "payload_property": "product",
+      "url": "products/{{entity.id}}.json"
+    },
+    "product-update": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "PUT",
+      "payload_property": "product",
+      "url": "products/{{entity.id}}.json"
+    },
+    "variant-insert": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "POST",
+      "payload_property": "variant",
+      "url": "variants.json"
+    },
+    "variant-list": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "next_page_link": "{%if (headers.link.next is defined)%}{{headers.link.next}}{%endif%}",
+      "next_page_termination_strategy": [
+        "next-page-link-empty"
+      ],
+      "page_size": 100,
+      "payload_property": "variants",
+      "updated_expression": "{{ updated_at }}",
+      "url": "variants.json?limit={{page_size}}&updated_at_min={{since}}"
+    },
+    "variant-lookup": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "GET",
+      "payload_property": "variant",
+      "url": "variants/{{entity.id}}.json"
+    },
+    "variant-update": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "PUT",
+      "payload_property": "variant",
+      "url": "variants/{{entity.id}}.json"
+    },
+    "webhook-delete": {
+      "method": "DELETE",
+      "url": "webhooks/{{ entity['id'] }}.json"
+    },
+    "webhook-insert": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "POST",
+      "payload-type": "json",
+      "url": "webhooks.json"
+    },
+    "webhook-list": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "payload_property": "webhooks",
+      "url": "webhooks.json"
+    },
+    "webhook-lookup": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "GET",
+      "payload-type": "json",
+      "url": "webhooks/{{ entity['id'] }}.json"
+    }
+  },
+  "type": "system:rest",
+  "url_pattern": "https://{{@ site_id @}}.myshopify.com/admin/api/2024-04/%s",
+  "verify_ssl": true
+}
