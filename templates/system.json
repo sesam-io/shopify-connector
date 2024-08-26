@@ -4,6 +4,14 @@
     "X-Shopify-Access-Token": "$SECRET(oauth_access_token)"
   },
   "operations": {
+    "countries-lookup": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "GET",
+      "payload_property": "countries",
+      "url": "countries/{{entity.id}}.json"
+    },
     "country-list": {
       "id_expression": "{{ id }}",
       "method": "GET",
@@ -62,24 +70,18 @@
       "payload_property": "customer",
       "url": "customers/{{entity.id}}.json"
     },
-    "inventoryitem-list": {
-      "id_expression": "{{ id }}",
-      "method": "GET",
-      "payload_property": "inventory_items",
-      "url": "inventory_items.json?ids={{ entity.inventory_ids }}"
-    },
     "inventoryitem-lookup": {
       "id_expression": "{{ id }}",
       "method": "GET",
       "payload_property": "inventory_item",
-      "url": "inventory_items/{{ id }}.json"
+      "url": "inventory_items/{{ entity.id }}.json"
     },
     "inventoryitem-update": {
       "headers": {
         "Content-Type": "application/json"
       },
       "method": "PUT",
-      "url": "inventory_items/{{ id }}.json"
+      "url": "inventory_items/{{ entity.id }}.json"
     },
     "order-insert": {
       "headers": {
