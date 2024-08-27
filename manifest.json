@@ -20,6 +20,7 @@
       "template": "templates/customer.json"
     },
     "inventoryitem": {
+      "parent": "sesamproduct",
       "template": "templates/inventoryitem.json"
     },
     "order": {
