@@ -17,7 +17,8 @@
   {
     "_id": "{{@ system @}}-{{@ datatype @}}-collect",
     "exclude_completeness": [
-      "{{@ system @}}-{{@ datatype @}}-event2"
+      "{{@ system @}}-{{@ datatype @}}-event2",
+      "{{@ system @}}-{{@ datatype @}}-collect"
     ],
     "namespaced_identifiers": false,
     "pump": {
