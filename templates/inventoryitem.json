@@ -77,10 +77,10 @@
     "type": "pipe"
   },
   {
-    "_id": "{{@ system @}}-{{@ parent @}}-collect",
+    "_id": "{{@ system @}}-{{@ datatype @}}-share",
     "exclude_completeness": [
       "{{@ system @}}-{{@ datatype @}}-share",
-      "{{@ system @}}-{{@ parent @}}-collect"
+      "{{@ system @}}-{{@ datatype @}}-share"
     ],
     "namespaced_identifiers": false,
     "pump": {
