@@ -19,6 +19,14 @@
               "_id"
             ],
             [
+              "filter",
+              [
+                "eq", 
+                "_S._deleted", 
+                false
+              ]
+            ],
+            [
               "discard",
               [
                 "is-not-empty",
