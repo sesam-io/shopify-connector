@@ -79,7 +79,8 @@
   {
     "_id": "{{@ system @}}-{{@ datatype @}}-collect",
     "exclude_completeness": [
-      "{{@ system @}}-{{@ datatype @}}-share"
+      "{{@ system @}}-{{@ datatype @}}-share",
+      "{{@ system @}}-{{@ parent @}}-collect"
     ],
     "namespaced_identifiers": false,
     "pump": {
