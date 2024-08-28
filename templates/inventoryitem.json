@@ -1,6 +1,7 @@
 [
   {
     "_id": "{{@ system @}}-{{@ datatype @}}-all",
+    "batch_size": 1,
     "namespaced_identifiers": false,
     "pump": {
       "run_at_startup_if_not_populated": true,
