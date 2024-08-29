@@ -638,6 +638,149 @@
           ]
         },
         "type": "dtl"
+      },
+      {
+        "properties": {
+          "client_side_patching": true,
+          "operation_delete": "{{@ parent @}}-delete",
+          "operation_insert": "{{@ parent @}}-insert",
+          "operation_lookup": "{{@ parent @}}-lookup",
+          "operation_update": "{{@ parent @}}-update",
+          "primary_key": "id",
+          "rest_system": "{{@ system @}}",
+          "rewrite_rules_lookup": {
+            "replace_response_body": [
+              [
+                "copy",
+                "*",
+                "variants"
+              ],
+              [
+                "merge",
+                [
+                  "dict",
+                  "variants",
+                  [
+                    "first",
+                    [
+                      "map",
+                      "_.",
+                      [
+                        "filter",
+                        [
+                          "eq",
+                          [
+                            "string",
+                            "_.id"
+                          ],
+                          [
+                            "first",
+                            "_R._S.$source.$id"
+                          ]
+                        ],
+                        "_S.variants"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            "rewrite_lookup": [
+              [
+                "copy",
+                "*",
+                "response_body"
+              ],
+              [
+                "add",
+                "$original_response_body",
+                "_S.response_body"
+              ],
+              [
+                "add",
+                "response_body",
+                [
+                  "apply",
+                  "replace_response_body",
+                  "_S.response_body"
+                ]
+              ]
+            ]
+          },
+          "rewrite_rules_payload": {
+            "merge_old_payload": [
+              [
+                "copy",
+                "*",
+                "variants"
+              ]
+            ],
+            "rewrite_insert_payload": [
+              [
+                "add",
+                "$payload",
+                [
+                  "dict",
+                  "{{@ parent @}}",
+                  "_S."
+                ]
+              ]
+            ],
+            "rewrite_update_payload_after_patch": [
+              [
+                "merge",
+                [
+                  "apply",
+                  "merge_old_payload",
+                  "_S._payload"
+                ]
+              ],
+              [
+                "add",
+                "variants",
+                [
+                  "map",
+                  "_.",
+                  [
+                    "sorted",
+                    [
+                      "max",
+                      "_.position"
+                    ],
+                    [
+                      "combine",
+                      "_S._payload.variants",
+                      [
+                        "filter",
+                        [
+                          "neq",
+                          "_.id",
+                          [
+                            "first",
+                            "_S._payload.variants.id"
+                          ]
+                        ],
+                        "_P._S.$original_response_body.variants"
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "add",
+                "$payload",
+                [
+                  "dict",
+                  "{{@ parent @}}",
+                  "_T."
+                ]
+              ]
+            ]
+          },
+          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
+        },
+        "template": "transform-share-rest",
+        "type": "template"
       }
     ],
     "type": "pipe"
