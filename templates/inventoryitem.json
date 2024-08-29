@@ -22,8 +22,8 @@
             [
               "filter",
               [
-                "eq", 
-                "_S._deleted", 
+                "eq",
+                "_S._deleted",
                 false
               ]
             ],
@@ -67,54 +67,6 @@
               [
                 "string",
                 "_S.id"
-              ]
-            ]
-          ]
-        },
-        "type": "dtl"
-      }
-    ],
-    "type": "pipe"
-  },
-  {
-    "_id": "{{@ system @}}-{{@ datatype @}}-share",
-    "exclude_completeness": [
-      "{{@ system @}}-{{@ datatype @}}-share",
-      "{{@ system @}}-{{@ datatype @}}-share"
-    ],
-    "namespaced_identifiers": false,
-    "pump": {
-      "run_at_startup_if_not_populated": true
-    },
-    "source": {
-      "dataset": "{{@ system @}}-{{@ datatype @}}-all",
-      "type": "dataset"
-    },
-    "transform": [
-      {
-        "properties": {
-          "operation_lookup_delete": "{{@ datatype @}}-lookup",
-          "primary_key": "id",
-          "rest_system": "{{@ system @}}",
-          "share_dataset": "{{@ system @}}-{{@ datatype @}}-share"
-        },
-        "template": "transform-collect-rest",
-        "type": "template"
-      },
-      {
-        "rules": {
-          "default": [
-            [
-              "copy",
-              "*"
-            ],
-            [
-              "add",
-              "$last-modified",
-              [
-                "datetime-parse",
-                "%Y-%m-%dT%H:%M:%S%z",
-                "_S.updated_at"
               ]
             ]
           ]

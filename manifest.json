@@ -1,7 +1,7 @@
 {
   "additional_parameters": {
     "service_url": {},
-    "site_id":{}
+    "site_id": {}
   },
   "auth": "oauth2",
   "datatypes": {
@@ -35,13 +35,18 @@
       "parent": "product",
       "template": "templates/sesamproduct.json"
     },
+    "shop": {
+      "label": "Shop",
+      "sync_frequency": "slow",
+      "template": "templates/currency.json"
+    },
     "webhook": {
       "label": "Webhook",
       "template": "templates/webhook.json"
     }
   },
   "oauth2": {
-    "login_url": "https://{{@ site_id @}}.myshopify.com/admin/oauth/authorize",
+    "login_url": "https://sesam-talk-dev.myshopify.com/admin/oauth/authorize",
     "scopes": [
       "write_inventory",
       "read_inventory",
@@ -52,7 +57,7 @@
       "read_orders",
       "write_orders"
     ],
-    "token_url": "https://{{@ site_id @}}.myshopify.com/admin/oauth/access_token"
+    "token_url": "https://sesam-talk-dev.myshopify.com/admin/oauth/access_token"
   },
   "system-template": "templates/system.json"
 }
