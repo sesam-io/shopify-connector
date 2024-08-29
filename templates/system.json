@@ -70,6 +70,19 @@
       "payload_property": "customer",
       "url": "customers/{{entity.id}}.json"
     },
+    "inventoryitem-lookup": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "payload_property": "inventory_item",
+      "url": "inventory_items/{{ entity.id }}.json"
+    },
+    "inventoryitem-update": {
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "method": "PUT",
+      "url": "inventory_items/{{ entity.id }}.json"
+    },
     "order-insert": {
       "headers": {
         "Content-Type": "application/json"
@@ -174,7 +187,7 @@
       },
       "method": "GET",
       "payload_property": "variant",
-      "url": "variants/{{entity.variants.id}}.json"
+      "url": "variants/{{entity.id}}.json"
     },
     "variant-update": {
       "headers": {
@@ -212,6 +225,6 @@
     }
   },
   "type": "system:rest",
-  "url_pattern": "https://{{@ site_id @}}.myshopify.com/admin/api/2024-01/%s",
+  "url_pattern": "https://{{@ site_id @}}.myshopify.com/admin/api/2024-04/%s",
   "verify_ssl": true
 }
