@@ -22,8 +22,8 @@
             [
               "filter",
               [
-                "eq", 
-                "_S._deleted", 
+                "eq",
+                "_S._deleted",
                 false
               ]
             ],
@@ -77,7 +77,7 @@
     "type": "pipe"
   },
   {
-    "_id": "{{@ system @}}-{{@ datatype @}}-share",
+    "_id": "{{@ system @}}-{{@ datatype @}}-collect",
     "exclude_completeness": [
       "{{@ system @}}-{{@ datatype @}}-share",
       "{{@ system @}}-{{@ datatype @}}-share"

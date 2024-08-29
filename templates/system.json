@@ -155,6 +155,12 @@
       "payload_property": "product",
       "url": "products/{{entity.id}}.json"
     },
+    "shop-list": {
+      "id_expression": "{{ id }}",
+      "method": "GET",
+      "payload_property": "shop",
+      "url": "shop.json"
+    },
     "variant-insert": {
       "headers": {
         "Content-Type": "application/json"
