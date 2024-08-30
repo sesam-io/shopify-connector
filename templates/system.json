@@ -156,9 +156,11 @@
       "url": "products/{{entity.id}}.json"
     },
     "shop-list": {
-      "id_expression": "{{ id }}",
+      "headers": {
+        "Accept": "application/json; charset=utf-8"
+      },
+      "id_expression": "{{ shop.id }}",
       "method": "GET",
-      "payload_property": "shop",
       "url": "shop.json"
     },
     "variant-insert": {
