@@ -156,9 +156,6 @@
       "url": "products/{{entity.id}}.json"
     },
     "shop-list": {
-      "headers": {
-        "Accept": "application/json; charset=utf-8"
-      },
       "id_expression": "{{ shop.id }}",
       "method": "GET",
       "url": "shop.json"
