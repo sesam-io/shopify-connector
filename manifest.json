@@ -38,7 +38,7 @@
     "shop": {
       "label": "Shop",
       "sync_frequency": "slow",
-      "template": "templates/currency.json"
+      "template": "templates/shop.json"
     },
     "webhook": {
       "label": "Webhook",
