@@ -80,7 +80,7 @@
     "_id": "{{@ system @}}-{{@ datatype @}}-collect",
     "exclude_completeness": [
       "{{@ system @}}-{{@ datatype @}}-share",
-      "{{@ system @}}-{{@ datatype @}}-share"
+      "{{@ system @}}-{{@ datatype @}}-collect"
     ],
     "namespaced_identifiers": false,
     "pump": {
