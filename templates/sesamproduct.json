@@ -444,14 +444,17 @@
               "add",
               "variants",
               [
-                "apply",
-                "recursive-merge",
+                "list", 
                 [
-                  "dict",
-                  "a",
-                  "_S.variants",
-                  "b",
-                  "_T._variants"
+                  "apply",
+                  "recursive-merge",
+                  [
+                    "dict",
+                    "a",
+                    "_S.variants",
+                    "b",
+                    "_T._variants"
+                  ]
                 ]
               ]
             ]
@@ -715,6 +718,17 @@
                 "variants"
               ]
             ],
+            "remove_internal_props": [
+              [
+                "copy", 
+                "*",
+                [
+                  "list", 
+                  "_*", 
+                  "$*"
+                ]
+              ]    
+            ],
             "rewrite_insert_payload": [
               [
                 "add",
@@ -722,7 +736,11 @@
                 [
                   "dict",
                   "{{@ parent @}}",
-                  "_S."
+                  [
+                    "apply", 
+                    "remove_internal_props", 
+                    "_S."
+                  ]
                 ]
               ]
             ],
