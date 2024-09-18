@@ -29,5 +29,5 @@ and the `oauth_client_secret` is automatically set during onboarding.
 
 In case you test on your dev node you have to use:
 ```json
-"validation_expression": "{% if request_headers['X-Shopify-Hmac-SHA256'] == b64encode(hmacsha256digest('<oauth_client_secret>', request_body)) %}{% else %}FAIL!{% endif %}"
+"validation_expression": "{% if request_headers['X-Shopify-Hmac-SHA256'] == b64encode(hmacsha256digest('<oauth_client_secret_value>', request_body)) %}{% else %}FAIL!{% endif %}"
 ```
