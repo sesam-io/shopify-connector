@@ -77,7 +77,8 @@
     },
     "source": {
       "system": "{{@ system @}}",
-      "type": "http_endpoint"
+      "type": "http_endpoint",
+      "validation_expression": "{% if request_headers['X-Shopify-Hmac-SHA256'] == b64encode(hmacsha256digest(secret('oauth_client_secret'), request_body)) %}{% else %}FAIL!{% endif %}"
     },
     "transform": [
       {
@@ -143,7 +144,7 @@
           "_updated": 0,
           "properties": {
             "webhook": {
-              "address": "{{@ service_url @}}/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
+              "address": "{{@ service_url @}}/api/receivers/{{@ system @}}-{{@ datatype @}}-event/entities",
               "topic": "{{@ datatype @}}s/create"
             }
           }

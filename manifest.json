@@ -59,5 +59,6 @@
     ],
     "token_url": "https://{{@ site_id @}}.myshopify.com/admin/oauth/access_token"
   },
-  "system-template": "templates/system.json"
+  "system-template": "templates/system.json",
+  "use_webhook_secret": true
 }
