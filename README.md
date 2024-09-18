@@ -7,7 +7,7 @@ When authenticating on dev-nodes through sesam-py you need to add your store nam
 
 ## Setting up Webhooks
 To enable webhooks you must ensure that the `service_url` environment variable is set in your Datahub Environment Variables of your subscription. The `service_url` should look like so:
-```jsunicoderegexp
+```html
 https://<your_datahub_id>.sesam.cloud/api
 ```
 
@@ -15,19 +15,19 @@ To register your webhooks make sure to run the webhook register pipes for each o
 
 Verify in the execution log for each of your webhooks pipes that the pipe succeeded in registering the webhooks.
 
-In order to consume the webhook events, verify that the manifest includes "use_webhook_secrets": true.
-This will create webhook secret and update `group:Anonymous` and `write_data` permissions.
-For `Shopify` we don't need the webhook secret but rather use `client_secret` to validate the webhook events (`Shopify` signs the webhook events with `client_secret` instead of our custom webhook secret, like in `Superoffice`).
-The event pipes must have the correct validation expression that uses client_secret.
-Note that when testing the webhooks with `Sesampy` on dev nodes, this is not automatically handled and you may need to manually add the `client_secret`.
+In order to consume the webhook events, verify that the manifest includes `"use_webhook_secrets": true`.
+This will create webhook secret and set `group:Anonymous` and `write_data` permissions to all event pipes.
+For Shopify we don't need the webhook secret but rather use `client_secret` to validate the webhook events (Shopify signs the webhook payload with `client_secret` instead of our custom webhook secret, like in Superoffice).
+The event pipes must have the correct validation expression that uses `client_secret`.
+Note that when testing the webhooks with `Sesampy` on dev nodes, this is not automatically handled and you may need to manually put the `client_secret` value into the validation expression.
 
 In talk environments, the validation expression looks like:
 ```json
 "validation_expression": "{% if request_headers['X-Shopify-Hmac-SHA256'] == b64encode(hmacsha256digest(secret('oauth_client_secret'), request_body)) %}{% else %}FAIL!{% endif %}"
 ```
-and the `oauth_client_secret` is automatically written when onboarding.
+and the `oauth_client_secret` is automatically set during onboarding.
 
-and in case you test on your dev node you have to use:
+In case you test on your dev node you have to use:
 ```json
 "validation_expression": "{% if request_headers['X-Shopify-Hmac-SHA256'] == b64encode(hmacsha256digest('<oauth_client_secret>', request_body)) %}{% else %}FAIL!{% endif %}"
 ```
